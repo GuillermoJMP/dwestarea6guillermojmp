@@ -8,6 +8,7 @@ public class Planta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String codigo;
     private String nombreComun;
     private String nombreCientifico;

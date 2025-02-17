@@ -26,23 +26,23 @@ public class PersonaController {
         return "persona";
     }
 
-    @GetMapping("/nuevoPersona")
-    public String crearFormulario(Model model) {
-        model.addAttribute("persona", new Persona());
-        return "persona";
-    }
-
     @PostMapping("/guardarPersona")
-    public String guardar(@ModelAttribute Persona persona) {
+    public String guardar(@RequestParam String nombre, @RequestParam String email, @RequestParam String usuario, @RequestParam String contrasena, Model model) {
+        Persona persona = new Persona();
+        persona.setNombre(nombre);
+        persona.setEmail(email);
+
         Persona nuevaPersona = personaService.guardar(persona);
 
         // Crea credenciales automáticamente
         Credenciales credenciales = new Credenciales();
-        credenciales.setUsuario(nuevaPersona.getEmail());
-        credenciales.setPassword("default123");
+        credenciales.setUsuario(usuario);
+        credenciales.setPassword(contrasena);
         credenciales.setPersona(nuevaPersona);
         credencialesService.guardar(credenciales);
 
+        List<Persona> personas = personaService.listarTodos();
+        model.addAttribute("personas", personas);
         return "persona";
     }
 }

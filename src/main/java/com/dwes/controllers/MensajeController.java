@@ -30,18 +30,15 @@ public class MensajeController {
         return "mensaje";
     }
 
-    @GetMapping("/nuevoMensaje")
-    public String crearFormulario(Model model) {
-        model.addAttribute("mensaje", new Mensaje());
-        model.addAttribute("personas", personaService.listarTodos());
-        model.addAttribute("ejemplares", ejemplarService.listarTodos());
-        return "mensaje";
-    }
-
-    @PostMapping("/guardarMensaje")
-    public String guardar(@ModelAttribute Mensaje mensaje) {
+    @PostMapping("/crearMensaje")
+    public String guardar(@RequestParam String anotacion, Model model) {
+        Mensaje mensaje = new Mensaje();
+        mensaje.setMensaje(anotacion);
         mensaje.setFechaHora(LocalDateTime.now());
         mensajeService.guardar(mensaje);
+
+        List<Mensaje> mensajes = mensajeService.listarTodos();
+        model.addAttribute("mensajes", mensajes);
         return "mensaje";
     }
 
@@ -50,13 +47,6 @@ public class MensajeController {
         List<Mensaje> mensajes = mensajeService.buscarPorPersona(id);
         model.addAttribute("mensajes", mensajes);
         return "mensaje";
-    }
-
-    @GetMapping("/ejemplar/{id}")
-    public String listarPorEjemplar(@PathVariable Long id, Model model) {
-        List<Mensaje> mensajes = mensajeService.buscarPorEjemplar(id);
-        model.addAttribute("mensajes", mensajes);
-        return "mensajes";
     }
 
     @GetMapping("/rango")

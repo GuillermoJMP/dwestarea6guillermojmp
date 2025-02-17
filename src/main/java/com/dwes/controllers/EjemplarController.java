@@ -1,6 +1,7 @@
 package com.dwes.controllers;
 
 import com.dwes.models.Ejemplar;
+import com.dwes.models.Planta;
 import com.dwes.services.EjemplarService;
 import com.dwes.services.PlantaService;
 
@@ -22,27 +23,22 @@ public class EjemplarController {
     @GetMapping("/ejemplares")
     public String listar(Model model) {
         List<Ejemplar> ejemplares = ejemplarService.listarTodos();
+        model.addAttribute("plantas",plantaService.listarTodas());
         model.addAttribute("ejemplares", ejemplares);
         return "ejemplares";
     }
 
-    @GetMapping("/nuevoEjemplar")
-    public String crearFormulario(Model model) {
-        model.addAttribute("ejemplar", new Ejemplar());
-        model.addAttribute("plantas", plantaService.listarTodas());
-        return "ejemplares";
-    }
-
     @PostMapping("/guardarEjemplar")
-    public String guardar(@ModelAttribute Ejemplar ejemplar) {
+    public String guardar(@RequestParam Long planta, Model model) {
+        Planta p = new Planta();
+        p.setId(planta);
+        Ejemplar ejemplar = new Ejemplar();
+        ejemplar.setPlanta(p);
         ejemplarService.guardar(ejemplar);
+
+        List<Ejemplar> ejemplares = ejemplarService.listarTodos();
+        model.addAttribute("plantas",plantaService.listarTodas());
+        model.addAttribute("ejemplares", ejemplares);
         return "ejemplares";
     }
-
-//    @GetMapping("/editar/{id}")
-//    public String editar(@PathVariable Long id, Model model) {
-//        model.addAttribute("ejemplar", ejemplarService.obtenerPorId(id));
-//        model.addAttribute("plantas", plantaService.listarTodas());
-//        return "ejemplares";
-//    }
 }
