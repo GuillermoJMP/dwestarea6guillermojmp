@@ -2,9 +2,6 @@ package com.dwes.controllers;
 
 import com.dwes.models.Mensaje;
 import com.dwes.services.MensajeService;
-import com.dwes.services.PersonaService;
-import com.dwes.services.EjemplarService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,43 +15,34 @@ public class MensajeController {
 
     @Autowired
     private MensajeService mensajeService;
-    @Autowired
-    private PersonaService personaService;
-    @Autowired
-    private EjemplarService ejemplarService;
 
-    @GetMapping("/mensaje")
+    @GetMapping("/mensajes")
     public String listar(Model model) {
-        List<Mensaje> mensajes = mensajeService.listarTodos();
-        model.addAttribute("mensajes", mensajes);
+        model.addAttribute("mensajes", mensajeService.listarTodos());
         return "mensaje";
     }
 
-    @PostMapping("/crearMensaje")
+    @PostMapping("/guardarMensaje")
     public String guardar(@RequestParam String anotacion, Model model) {
         Mensaje mensaje = new Mensaje();
         mensaje.setMensaje(anotacion);
         mensaje.setFechaHora(LocalDateTime.now());
         mensajeService.guardar(mensaje);
-
-        List<Mensaje> mensajes = mensajeService.listarTodos();
-        model.addAttribute("mensajes", mensajes);
+        model.addAttribute("mensajes", mensajeService.listarTodos());
         return "mensaje";
     }
 
-    @GetMapping("/persona/{id}")
+    @GetMapping("/mensajes/persona/{id}")
     public String listarPorPersona(@PathVariable Long id, Model model) {
-        List<Mensaje> mensajes = mensajeService.buscarPorPersona(id);
-        model.addAttribute("mensajes", mensajes);
+        model.addAttribute("mensajes", mensajeService.buscarPorPersona(id));
         return "mensaje";
     }
 
-    @GetMapping("/rango")
+    @GetMapping("/mensajes/rango")
     public String listarPorRango(@RequestParam("inicio") String inicio, @RequestParam("fin") String fin, Model model) {
         LocalDateTime fechaInicio = LocalDateTime.parse(inicio);
         LocalDateTime fechaFin = LocalDateTime.parse(fin);
-        List<Mensaje> mensajes = mensajeService.buscarPorRangoFechas(fechaInicio, fechaFin);
-        model.addAttribute("mensajes", mensajes);
-        return "mensajes";
+        model.addAttribute("mensajes", mensajeService.buscarPorRangoFechas(fechaInicio, fechaFin));
+        return "mensaje";
     }
 }
