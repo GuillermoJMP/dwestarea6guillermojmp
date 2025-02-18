@@ -11,34 +11,37 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
+@RequestMapping("/ejemplares")
 public class EjemplarController {
 
-	@Autowired
-    private EjemplarService ejemplarService;
     @Autowired
-	private PlantaService plantaService;
+    private EjemplarService ejemplarService;
 
-    @GetMapping("/ejemplares")
+    @Autowired
+    private PlantaService plantaService;
+
+    // Listar ejemplares y mostrar las plantas disponibles para asignar
+    @GetMapping
     public String listar(Model model) {
-        List<Ejemplar> ejemplares = ejemplarService.listarTodos();
-        model.addAttribute("plantas",plantaService.listarTodas());
-        model.addAttribute("ejemplares", ejemplares);
+        model.addAttribute("ejemplares", ejemplarService.listarTodos());
+        model.addAttribute("plantas", plantaService.listarTodas());
         return "ejemplares";
     }
 
-    @PostMapping("/guardarEjemplar")
+    // Guardar nuevo ejemplar asignado a una planta
+    @PostMapping("/guardar")
     public String guardar(@RequestParam Long planta, Model model) {
-        Planta p = new Planta();
-        p.setId(planta);
-        Ejemplar ejemplar = new Ejemplar();
-        ejemplar.setPlanta(p);
-        ejemplarService.guardar(ejemplar);
+        Optional<Planta> optionalPlanta = plantaService.obtenerPorId(planta);
 
-        List<Ejemplar> ejemplares = ejemplarService.listarTodos();
-        model.addAttribute("plantas",plantaService.listarTodas());
-        model.addAttribute("ejemplares", ejemplares);
-        return "ejemplares";
+        if (optionalPlanta.isPresent()) {
+            Ejemplar ejemplar = new Ejemplar();
+            ejemplar.setPlanta(optionalPlanta.get());
+            ejemplarService.guardar(ejemplar);
+        }
+
+        return "redirect:/ejemplares";
     }
 }
