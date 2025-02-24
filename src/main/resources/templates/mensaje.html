@@ -7,34 +7,20 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
-
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="mensaje.css">
 </head>
 
 <body data-page="mensajes">
-
     <!-- Navbar -->
     <nav class="navbar navbar-dark fixed-top">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <button class="btn btn-outline-light" id="menuToggle">☰ Menú</button>
             <a class="navbar-brand mx-auto" href="#">Viveros Acme</a>
-
-            <!-- Usuario -->
-            <div class="dropdown">
-                <img src="user.png" alt="Usuario" class="user-img dropdown-toggle" id="userMenuToggle" data-bs-toggle="dropdown" aria-expanded="false">
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuToggle">
-                    <li><a class="dropdown-item" th:href="@{/perfil}">Perfil</a></li>
-                    <li><a class="dropdown-item" th:href="@{/login}">Cerrar Sesión</a></li>
-                </ul>
-            </div>
         </div>
     </nav>
 
-    <!-- Sidebar Mejorado -->
+    <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
         <a th:href="@{/inicio}">🏡 Inicio</a>
         <a th:href="@{/plantas}">🌱 Gestión de Plantas</a>
@@ -43,7 +29,6 @@
         <a th:href="@{/persona}">👥 Gestión de Personas</a>
     </nav>
 
-    <!-- Fondo Oscuro -->
     <div class="overlay" id="overlay"></div>
 
     <!-- Contenido Principal -->
@@ -53,7 +38,7 @@
         <!-- Formulario de Búsqueda -->
         <section class="mb-4 form-container">
             <h3>Buscar Mensajes</h3>
-            <form th:action="@{/mensajes/filtrar}" method="get">
+            <form th:action="@{/rango}" method="get">
                 <div class="row g-2">
                     <div class="col-md-4">
                         <label for="usuario" class="form-label">Usuario</label>
@@ -61,11 +46,11 @@
                     </div>
                     <div class="col-md-3">
                         <label for="fechaInicio" class="form-label">Fecha Inicio</label>
-                        <input type="date" id="fechaInicio" name="fechaInicio" class="form-control">
+                        <input type="date" id="fechaInicio" name="inicio" class="form-control">
                     </div>
                     <div class="col-md-3">
                         <label for="fechaFin" class="form-label">Fecha Fin</label>
-                        <input type="date" id="fechaFin" name="fechaFin" class="form-control">
+                        <input type="date" id="fechaFin" name="fin" class="form-control">
                     </div>
                     <div class="col-md-2 d-flex align-items-end">
                         <button type="submit" class="btn btn-primary w-100">Filtrar</button>

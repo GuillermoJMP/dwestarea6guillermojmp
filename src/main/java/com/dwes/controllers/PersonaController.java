@@ -1,8 +1,6 @@
 package com.dwes.controllers;
 
-import com.dwes.models.Credenciales;
 import com.dwes.models.Persona;
-import com.dwes.services.CredencialesService;
 import com.dwes.services.PersonaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,9 +14,8 @@ public class PersonaController {
 
     @Autowired
     private PersonaService personaService;
-    @Autowired
-    private CredencialesService credencialesService;
 
+    // Listar todas las personas
     @GetMapping("/persona")
     public String listar(Model model) {
         List<Persona> personas = personaService.listarTodos();
@@ -26,23 +23,16 @@ public class PersonaController {
         return "persona";
     }
 
+    // Guardar una nueva persona
     @PostMapping("/guardarPersona")
-    public String guardar(@RequestParam String nombre, @RequestParam String email, @RequestParam String usuario, @RequestParam String contrasena, Model model) {
+    public String guardar(@RequestParam String nombre, @RequestParam String email, Model model) {
         Persona persona = new Persona();
         persona.setNombre(nombre);
         persona.setEmail(email);
 
-        Persona nuevaPersona = personaService.guardar(persona);
+        personaService.guardar(persona);
 
-        // Crea credenciales automáticamente
-        Credenciales credenciales = new Credenciales();
-        credenciales.setUsuario(usuario);
-        credenciales.setPassword(contrasena);
-        credenciales.setPersona(nuevaPersona);
-        credencialesService.guardar(credenciales);
-
-        List<Persona> personas = personaService.listarTodos();
-        model.addAttribute("personas", personas);
+        model.addAttribute("personas", personaService.listarTodos());
         return "persona";
     }
 }

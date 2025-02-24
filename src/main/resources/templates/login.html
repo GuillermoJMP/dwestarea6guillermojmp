@@ -1,86 +1,66 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Viveros Acme - Login</title>
 
     <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="login.css">
+</head>
 
-    <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="login.css" />
-  </head>
-
-  <body>
+<body>
     <!-- Sidebar Mejorado -->
     <nav class="sidebar" id="sidebar">
-      <a th:href="@{/inicio}">🏡 Inicio</a>
-      <a th:href="@{/plantas}">🌱 Gestión de Plantas</a>
-      <a th:href="@{/ejemplares}">🌿 Gestión de Ejemplares</a>
-      <a th:href="@{/mensajes}">📩 Gestión de Mensajes</a>
-      <a th:href="@{/persona}">👥 Gestión de Personas</a>
+        <a th:href="@{/inicio}">🏡 Inicio</a>
+        <a th:href="@{/plantas}">🌱 Gestión de Plantas</a>
+        <a th:href="@{/ejemplares}">🌿 Gestión de Ejemplares</a>
+        <a th:href="@{/mensajes}">📩 Gestión de Mensajes</a>
+        <a th:href="@{/persona}">👥 Gestión de Personas</a>
     </nav>
 
     <!-- Fondo Oscuro -->
     <div class="overlay" id="overlay"></div>
 
     <div class="container">
-      <div class="login-container">
-        <h1 class="login-title">Viveros Acme</h1>
-        <form th:action="@{/credenciales/autenticar}" method="post">
-          <div class="mb-3">
-            <label for="usuario" class="form-label">Usuario</label>
-            <input
-              type="text"
-              class="form-control"
-              id="usuario"
-              name="usuario"
-              required
-              placeholder="Ingrese su usuario"
-            />
-          </div>
-          <div class="mb-3">
-            <label for="password" class="form-label">Contraseña</label>
-            <input
-              type="password"
-              class="form-control"
-              id="password"
-              name="password"
-              required
-              placeholder="Ingrese su contraseña"
-            />
-          </div>
-          <button type="submit" class="btn btn-login">Iniciar Sesión</button>
-        </form>
-      </div>
+        <div class="login-container">
+            <h1 class="login-title">Viveros Acme</h1>
+
+            <!-- Mensaje de error si el login falla -->
+            <div th:if="${param.error}" class="alert alert-danger">
+                Credenciales incorrectas. Inténtelo de nuevo.
+            </div>
+
+            <form th:action="@{/autenticar}" method="post">
+                <div class="mb-3">
+                    <label for="usuario" class="form-label">Usuario</label>
+                    <input type="text" class="form-control" id="usuario" name="usuario" required placeholder="Ingrese su usuario" />
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input type="password" class="form-control" id="password" name="password" required placeholder="Ingrese su contraseña" />
+                </div>
+                <button type="submit" class="btn btn-login">Iniciar Sesión</button>
+            </form>
+        </div>
     </div>
 
     <!-- JavaScript -->
     <script>
-      document
-        .getElementById("menuToggle")
-        .addEventListener("click", function () {
-          document.getElementById("sidebar").classList.toggle("show");
-          document.getElementById("overlay").classList.toggle("show");
+        document.getElementById("menuToggle").addEventListener("click", function () {
+            document.getElementById("sidebar").classList.toggle("show");
+            document.getElementById("overlay").classList.toggle("show");
         });
 
-      document.getElementById("overlay").addEventListener("click", function () {
-        document.getElementById("sidebar").classList.remove("show");
-        document.getElementById("overlay").classList.remove("show");
-      });
+        document.getElementById("overlay").addEventListener("click", function () {
+            document.getElementById("sidebar").classList.remove("show");
+            document.getElementById("overlay").classList.remove("show");
+        });
     </script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  </body>
+</body>
 </html>

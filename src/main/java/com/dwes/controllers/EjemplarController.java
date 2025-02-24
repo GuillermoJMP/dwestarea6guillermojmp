@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class EjemplarController {
@@ -21,7 +22,7 @@ public class EjemplarController {
     @Autowired
     private PlantaService plantaService;
 
-    // Muestra la lista de ejemplares y plantas
+    // Listar ejemplares y plantas disponibles
     @GetMapping("/ejemplares")
     public String listar(Model model) {
         List<Ejemplar> ejemplares = ejemplarService.listarTodos();
@@ -30,18 +31,20 @@ public class EjemplarController {
         return "ejemplares";
     }
 
-    // Guarda un nuevo ejemplar y lo asocia a una planta
+    // Guardar nuevo ejemplar
     @PostMapping("/guardarEjemplar")
-    public String guardar(@RequestParam Long planta, Model model) {
-        Planta p = new Planta();
-        p.setId(planta);
-        Ejemplar ejemplar = new Ejemplar();
-        ejemplar.setPlanta(p);
-        ejemplarService.guardar(ejemplar);
+    public String guardar(@RequestParam String nombre, @RequestParam Long planta, Model model) {
+        Optional<Planta> optionalPlanta = plantaService.obtenerPorId(planta);
+        
+        if (optionalPlanta.isPresent()) {
+            Ejemplar ejemplar = new Ejemplar();
+            ejemplar.setNombre(nombre);
+            ejemplar.setPlanta(optionalPlanta.get());
+            ejemplarService.guardar(ejemplar);
+        }
 
         model.addAttribute("plantas", plantaService.listarTodas());
         model.addAttribute("ejemplares", ejemplarService.listarTodos());
-
         return "ejemplares";
     }
 }
