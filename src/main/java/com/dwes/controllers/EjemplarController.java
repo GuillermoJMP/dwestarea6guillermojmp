@@ -15,19 +15,22 @@ import java.util.List;
 @Controller
 public class EjemplarController {
 
-	@Autowired
-    private EjemplarService ejemplarService;
     @Autowired
-	private PlantaService plantaService;
+    private EjemplarService ejemplarService;
 
+    @Autowired
+    private PlantaService plantaService;
+
+    // Muestra la lista de ejemplares y plantas
     @GetMapping("/ejemplares")
     public String listar(Model model) {
         List<Ejemplar> ejemplares = ejemplarService.listarTodos();
-        model.addAttribute("plantas",plantaService.listarTodas());
+        model.addAttribute("plantas", plantaService.listarTodas());
         model.addAttribute("ejemplares", ejemplares);
         return "ejemplares";
     }
 
+    // Guarda un nuevo ejemplar y lo asocia a una planta
     @PostMapping("/guardarEjemplar")
     public String guardar(@RequestParam Long planta, Model model) {
         Planta p = new Planta();
@@ -36,9 +39,9 @@ public class EjemplarController {
         ejemplar.setPlanta(p);
         ejemplarService.guardar(ejemplar);
 
-        List<Ejemplar> ejemplares = ejemplarService.listarTodos();
-        model.addAttribute("plantas",plantaService.listarTodas());
-        model.addAttribute("ejemplares", ejemplares);
+        model.addAttribute("plantas", plantaService.listarTodas());
+        model.addAttribute("ejemplares", ejemplarService.listarTodos());
+
         return "ejemplares";
     }
 }
