@@ -34,6 +34,7 @@ public class PersonaController {
 
         Persona nuevaPersona = personaService.guardar(persona);
 
+        // Crea credenciales automáticamente
         Credenciales credenciales = new Credenciales();
         credenciales.setUsuario(usuario);
         credenciales.setPassword(contrasena);
