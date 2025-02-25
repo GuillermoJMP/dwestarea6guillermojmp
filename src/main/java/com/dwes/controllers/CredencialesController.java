@@ -27,8 +27,8 @@ public class CredencialesController {
     @PostMapping("/autenticar")
     public String autenticar(@RequestParam String usuario, @RequestParam String password) {
         if (credencialesService.autenticar(usuario, password)) {
-            return "redirect:/inicio"; // Redirige a la página de inicio después del login exitoso
+            return "redirect:/inicio"; 
         }
-        return "redirect:/login?error=true"; // Redirige al login con un mensaje de error si falla la autenticación
+        return "redirect:/login?error=true"; 
     }
 }
