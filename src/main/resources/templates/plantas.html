@@ -1,87 +1,24 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Viveros Acme - Plantas</title>
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body data-page="plantas">
-     <!-- Offcanvas Menú Lateral -->
-    <div
-      class="offcanvas offcanvas-start"
-      tabindex="-1"
-      id="offcanvasMenu"
-      aria-labelledby="offcanvasMenuLabel"
-    >
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menú</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="offcanvas"
-          aria-label="Cerrar"
-        ></button>
-      </div>
-      <div class="offcanvas-body">
-        <ul class="list-group menu-list">
-          <li class="list-group-item menu-item">
-            <a href="inicio">Inicio</a>
-          </li>
-          <li class="list-group-item menu-item">
-            <a href="plantas">Gestión de Plantas</a>
-          </li>
-          <li class="list-group-item menu-item">
-            <a href="ejemplares">Gestión de Ejemplares</a>
-          </li>
-          <li class="list-group-item menu-item">
-            <a href="mensaje">Gestión de Mensajes</a>
-          </li>
-          <li class="list-group-item menu-item">
-            <a href="persona">Gestion de Personas</a>
-          </li>
-        </ul>
-      </div>
-    </div>
 
-    <!-- Encabezado -->
-    <header
-      class="container-fluid header d-flex justify-content-between align-items-center"
-    >
-      <button
-        class="btn btn-success btn-menu"
-        type="button"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#offcanvasMenu"
-        aria-controls="offcanvasMenu"
-      >
-        <span class="navbar-toggler-icon"></span> menú
-      </button>
-      <h1 class="header-title m-0">viveros acme</h1>
-      <div class="dropdown">
-        <a
-          href="#"
-          id="userDropdown"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          <img src="user.png" alt="Usuario" class="rounded-circle user-icon" />
-        </a>
-        <ul
-          class="dropdown-menu dropdown-menu-end user-dropdown"
-          aria-labelledby="userDropdown"
-        >
-          <li><a class="dropdown-item" href="#">Perfil</a></li>
-          <li><a class="dropdown-item" href="login">Cerrar Sesión</a></li>
-        </ul>
-      </div>
-    </header>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="plantas.css">
+</head>
+
+<body data-page="plantas">
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark fixed-top">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <button class="btn btn-outline-light" id="menuToggle">☰ Menú</button>
+            <a class="navbar-brand mx-auto" href="#">Viveros Acme</a>
+        </div>
+    </nav>
 
     <!-- Contenido Principal: Plantas -->
     <main class="container main-content">
@@ -89,7 +26,7 @@
       <!-- Sección para Agregar Planta -->
       <section class="mb-4">
         <h3>Añadir planta</h3>
-        <form th:action="@{/plantas}" method="post">
+        <form th:action="@{/guardarPlanta}" method="post">
           <div class="mb-3">
             <label for="codigo" class="form-label">Codigo</label>
             <input
@@ -126,26 +63,83 @@
         </form>
       </section>
 
-      <!-- Sección de Listado de Plantas -->
-      <section>
-        <h3>Listado de Plantas</h3>
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Nombre Común</th>
-              <th>Nombre Científico</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:each="planta : ${plantas}">
-              <td th:text="${planta.codigo}"></td>
-              <td th:text="${planta.nombreComun}"></td>
-              <td th:text="${planta.nombreCientifico}"></td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Contenido Principal -->
+    <main class="container mt-5 main-content">
+        <h2 class="text-center">Gestión de Plantas</h2>
+
+        <div class="row">
+            <!-- Formulario de Registro -->
+            <div class="col-md-6 mb-4">
+                <h5>Añadir Planta</h5>
+                <div class="form-container">
+                    <form th:action="@{/guardarPlanta}" method="post">
+                        <div class="mb-3">
+                            <label for="codigo" class="form-label">Código</label>
+                            <input type="text" class="form-control" id="codigo" name="codigo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="commonName" class="form-label">Nombre Común</label>
+                            <input type="text" class="form-control" id="commonName" name="nombreComun" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="scientificName" class="form-label">Nombre Científico</label>
+                            <input type="text" class="form-control" id="scientificName" name="nombreCientifico" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Añadir Planta</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Listado de Plantas -->
+            <div class="col-md-6 mb-4">
+                <h5>Listado de Plantas</h5>
+                <div class="content-box">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Código</th>
+                                    <th>Nombre Común</th>
+                                    <th>Nombre Científico</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="planta : ${plantas}">
+                                    <td th:text="${planta.id}"></td>
+                                    <td th:text="${planta.codigo}"></td>
+                                    <td th:text="${planta.nombreComun}"></td>
+                                    <td th:text="${planta.nombreCientifico}"></td>
+                                    <td>
+                                        <a th:href="@{/editar/{id}(id=${planta.id})}" class="btn btn-sm btn-warning">Editar</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
-  </body>
+
+    <!-- JavaScript -->
+    <script>
+        document.getElementById("menuToggle").addEventListener("click", function () {
+            document.getElementById("sidebar").classList.toggle("show");
+            document.getElementById("overlay").classList.toggle("show");
+        });
+
+        document.getElementById("overlay").addEventListener("click", function () {
+            document.getElementById("sidebar").classList.remove("show");
+            document.getElementById("overlay").classList.remove("show");
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
 </html>

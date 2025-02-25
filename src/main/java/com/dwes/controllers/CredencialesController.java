@@ -8,24 +8,27 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class CredencialesController {
 
-	@Autowired
-	private CredencialesServiceImpl credencialesService;
+    @Autowired
+    private CredencialesServiceImpl credencialesService;
 
-	@GetMapping("/login")
-	public String mostrarLogin() {
-		return "login";
-	}
+    // Muestra la página de login
+    @GetMapping("/login")
+    public String mostrarLogin() {
+        return "login";
+    }
 
-	@GetMapping("/logout")
-	public String logout() {
-		return "inicio";
-	}
+    // Cierra sesión y redirige a login
+    @GetMapping("/logout")
+    public String logout() {
+        return "login";
+    }
 
-	@PostMapping("/autenticar")
-	public String autenticar(@RequestParam String usuario, @RequestParam String password) {
-		if (credencialesService.autenticar(usuario, password)) {
-			return "inicio";
-		}
-		return "inicio";
-	}
+    // Autenticar usuario
+    @PostMapping("/autenticar")
+    public String autenticar(@RequestParam String usuario, @RequestParam String password) {
+        if (credencialesService.autenticar(usuario, password)) {
+            return "redirect:/inicio"; // Redirige a la página de inicio después del login exitoso
+        }
+        return "redirect:/login?error=true"; // Redirige al login con un mensaje de error si falla la autenticación
+    }
 }
