@@ -22,14 +22,14 @@ public class PlantaController {
         return "plantas";
     }
 
-    @PostMapping("/guardarPlanta")
+    @PostMapping("/plantas")
     public String guardar(@ModelAttribute Planta planta, Model model) {
         plantaService.guardar(planta);
         model.addAttribute("plantas",plantaService.listarTodas());
         return "plantas";
     }
 
-    @GetMapping("/editar/{id}")
+    @GetMapping("/plantas{id}")
     public String buscarPorId(@PathVariable Long id, Model model) {
         model.addAttribute("planta", plantaService.obtenerPorId(id));
         model.addAttribute("plantas",plantaService.listarTodas());
