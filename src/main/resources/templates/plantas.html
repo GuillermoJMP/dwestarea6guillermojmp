@@ -20,48 +20,14 @@
         </div>
     </nav>
 
-    <!-- Contenido Principal: Plantas -->
-    <main class="container main-content">
-      <h2>Gestión de Plantas</h2>
-      <!-- Sección para Agregar Planta -->
-      <section class="mb-4">
-        <h3>Añadir planta</h3>
-        <form th:action="@{/guardarPlanta}" method="post">
-          <div class="mb-3">
-            <label for="codigo" class="form-label">Codigo</label>
-            <input
-              type="text"
-              class="form-control"
-              id="codigo"
-              name="codigo"
-              required
-            />
-          </div>
-          <div class="mb-3">
-            <label for="commonName" class="form-label">Nombre Común</label>
-            <input
-              type="text"
-              class="form-control"
-              id="commonName"
-              name="nombreComun"
-              required
-            />
-          </div>
-          <div class="mb-3">
-            <label for="scientificName" class="form-label"
-              >Nombre Científico</label
-            >
-            <input
-              type="text"
-              class="form-control"
-              id="scientificName"
-              name="nombreCientifico"
-              required
-            />
-          </div>
-          <button type="submit" class="btn btn-primary">Añadir Planta</button>
-        </form>
-      </section>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <a th:href="@{/inicio}">🏡 Inicio</a>
+        <a th:href="@{/plantas}">🌱 Gestión de Plantas</a>
+        <a th:href="@{/ejemplares}">🌿 Gestión de Ejemplares</a>
+        <a th:href="@{/mensaje}">📩 Gestión de Mensajes</a>
+        <a th:href="@{/persona}">👥 Gestión de Personas</a>
+    </nav>
 
     <div class="overlay" id="overlay"></div>
 
