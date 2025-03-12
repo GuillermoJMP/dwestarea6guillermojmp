@@ -1,6 +1,8 @@
 package com.dwes.models;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Entity
@@ -12,10 +14,10 @@ public class Ejemplar {
     private String nombre;
 
     @ManyToOne
-    @JoinColumn(name = "idPlanta", nullable = false)
+    @JoinColumn(name = "idPlanta")
     private Planta planta;
 
-    @OneToMany(mappedBy = "ejemplar", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "ejemplar", cascade = CascadeType.ALL)
     private List<Mensaje> mensajes;
 
     // Getters y Setters
@@ -49,5 +51,18 @@ public class Ejemplar {
 
     public void setMensajes(List<Mensaje> mensajes) {
         this.mensajes = mensajes;
+    }
+
+    // Métodos adicionales para Thymeleaf
+    public int getNumeroMensajes() {
+        return (mensajes != null) ? mensajes.size() : 0;
+    }
+
+    public String getUltimoMensaje() {
+        if (mensajes != null && !mensajes.isEmpty()) {
+            LocalDateTime fechaHora = mensajes.get(mensajes.size() - 1).getFechaHora();
+            return fechaHora.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+        }
+        return "Sin mensajes";
     }
 }

@@ -17,7 +17,15 @@ public class EjemplarServiceImpl implements EjemplarService {
 
     @Override
     public List<Ejemplar> listarTodos() {
-        return ejemplarRepository.findAll();
+        List<Ejemplar> ejemplares = ejemplarRepository.findAll();
+        
+        // Forzar la carga de mensajes para cada ejemplar
+        for (Ejemplar e : ejemplares) {
+            e.getNumeroMensajes();  // Inicializa la cantidad de mensajes
+            e.getUltimoMensaje();   // Obtiene el último mensaje
+        }
+        
+        return ejemplares;
     }
 
     @Override
@@ -35,4 +43,6 @@ public class EjemplarServiceImpl implements EjemplarService {
     public List<Ejemplar> filtrarPorPlanta(Long plantaId) {
         return ejemplarRepository.findByPlantaId(plantaId);
     }
+    
+    
 }
