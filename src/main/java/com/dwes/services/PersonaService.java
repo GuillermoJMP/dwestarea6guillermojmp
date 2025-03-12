@@ -8,4 +8,7 @@ public interface PersonaService {
     Persona guardar(Persona persona);
     void eliminar(Long id);
     Persona obtenerPorId(Long id);
+    
+    boolean existeEmail(String email);
+    boolean existeUsuario(String usuario);
 }
