@@ -4,7 +4,6 @@ import com.dwes.models.Persona;
 import com.dwes.repositories.PersonaRepository;
 import com.dwes.services.PersonaService;
 import jakarta.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.List;
 @Service
 public class PersonaServiceImpl implements PersonaService {
 
-	@Autowired
+    @Autowired
     private PersonaRepository personaRepository;
 
     @Override
@@ -34,5 +33,15 @@ public class PersonaServiceImpl implements PersonaService {
     @Override
     public Persona obtenerPorId(Long id) {
         return personaRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public boolean existeEmail(String email) {
+        return personaRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existeUsuario(String usuario) {
+        return personaRepository.existsByUsuario(usuario);
     }
 }

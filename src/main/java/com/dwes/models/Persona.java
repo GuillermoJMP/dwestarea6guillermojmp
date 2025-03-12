@@ -1,24 +1,38 @@
 package com.dwes.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 
 @Entity
+@Table(name = "persona")
 public class Persona {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "El nombre no puede estar vacío")
+    @Column(nullable = false, unique = true)
     private String nombre;
 
-    @Column(unique = true)
-    @Email(message = "Debe ser un email válido")
-    @NotBlank(message = "El email no puede estar vacío")
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false, unique = true)
+    private String usuario;
+
+    @Column(nullable = false)
+    private String password;
+
+    // Constructor vacío
+    public Persona() {
+    }
+
+    // Constructor con parámetros
+    public Persona(String nombre, String email, String usuario, String password) {
+        this.nombre = nombre;
+        this.email = email;
+        this.usuario = usuario;
+        this.password = password;
+    }
 
     // Getters y Setters
     public Long getId() {
@@ -43,5 +57,21 @@ public class Persona {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
