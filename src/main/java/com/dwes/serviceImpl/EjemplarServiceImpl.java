@@ -7,13 +7,12 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 public class EjemplarServiceImpl implements EjemplarService {
 
-	@Autowired
+    @Autowired
     private EjemplarRepository ejemplarRepository;
 
     @Override
@@ -30,5 +29,10 @@ public class EjemplarServiceImpl implements EjemplarService {
     @Override
     public Ejemplar obtenerPorId(Long id) {
         return ejemplarRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<Ejemplar> filtrarPorPlanta(Long plantaId) {
+        return ejemplarRepository.findByPlantaId(plantaId);
     }
 }

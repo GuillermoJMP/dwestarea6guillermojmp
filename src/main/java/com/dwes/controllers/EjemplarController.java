@@ -22,29 +22,29 @@ public class EjemplarController {
     @Autowired
     private PlantaService plantaService;
 
-    // Listar ejemplares y plantas disponibles
-    @GetMapping("/ejemplares")
-    public String listar(Model model) {
-        List<Ejemplar> ejemplares = ejemplarService.listarTodos();
+    @GetMapping("/ejemplaresAdmin")
+    public String listar(Model model, @RequestParam(required = false) Long plantaId) {
+        List<Ejemplar> ejemplares = (plantaId == null) ? ejemplarService.listarTodos() : ejemplarService.filtrarPorPlanta(plantaId);
         model.addAttribute("plantas", plantaService.listarTodas());
         model.addAttribute("ejemplares", ejemplares);
-        return "ejemplares";
+        return "ejemplaresAdmin";
     }
 
-    // Guardar nuevo ejemplar
     @PostMapping("/guardarEjemplar")
-    public String guardar(@RequestParam String nombre, @RequestParam Long planta, Model model) {
+    public String guardar(@RequestParam Long planta, Model model) {
         Optional<Planta> optionalPlanta = plantaService.obtenerPorId(planta);
-        
+
         if (optionalPlanta.isPresent()) {
+            Planta selectedPlanta = optionalPlanta.get();
             Ejemplar ejemplar = new Ejemplar();
-            ejemplar.setNombre(nombre);
-            ejemplar.setPlanta(optionalPlanta.get());
+            ejemplar.setPlanta(selectedPlanta);
+
+            // Generar el nombre en formato CODIGO_PLANTA + ID
+            ejemplar = ejemplarService.guardar(ejemplar);
+            ejemplar.setNombre(selectedPlanta.getCodigo() + "_" + ejemplar.getId());
             ejemplarService.guardar(ejemplar);
         }
 
-        model.addAttribute("plantas", plantaService.listarTodas());
-        model.addAttribute("ejemplares", ejemplarService.listarTodos());
-        return "ejemplares";
+        return "redirect:/ejemplaresAdmin";
     }
 }
