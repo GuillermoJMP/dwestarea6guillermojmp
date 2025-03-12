@@ -2,12 +2,11 @@ package com.dwes.repositories;
 
 import com.dwes.models.Planta;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-@Repository
 public interface PlantaRepository extends JpaRepository<Planta, Long> {
-//	@Query("SELECT * FROM Planta")
-//	boolean mostrarPlantas;
-	
+    List<Planta> findAllByOrderByNombreComunAsc(); // Ordena por nombre común ascendente
+    boolean existsByCodigo(String codigo); // Verifica si el código ya existe
+    boolean existsByNombreComun(String nombreComun); // Verifica nombre común único
+    boolean existsByNombreCientifico(String nombreCientifico); // Verifica nombre científico único
 }
