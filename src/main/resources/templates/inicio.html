@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="inicio.css">
 </head>
 
-<body data-role="admin" data-page="inicio">
+<body data-page="inicio">
     <!-- Navbar -->
     <nav class="navbar navbar-dark fixed-top">
         <div class="container-fluid d-flex justify-content-between align-items-center">
@@ -23,7 +23,7 @@
                 <img src="user.png" alt="Usuario" class="user-img dropdown-toggle" id="userMenuToggle" data-bs-toggle="dropdown" aria-expanded="false">
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuToggle">
                     <li><a class="dropdown-item" th:href="@{/perfil}">Perfil</a></li>
-                    <li><a class="dropdown-item" th:href="@{/login}">Cerrar Sesión</a></li>
+                    <li><a class="dropdown-item" th:href="@{/logout}">Cerrar Sesión</a></li>
                 </ul>
             </div>
         </div>
@@ -44,9 +44,33 @@
     <!-- Contenido Principal -->
     <main class="container mt-5 main-content">
         <div class="content-box">
-            <h3>
-                Bienvenido, <span th:text="${nombreUsuario}">Administrador</span>.
-            </h3>
+            <!-- Mensaje de bienvenida dinámico -->
+            <h3 th:text="${mensajeBienvenida}">Bienvenido, Usuario.</h3>
+        </div>
+
+        <!-- Listado de Ejemplares (visible para todos los usuarios) -->
+        <div class="mt-4">
+            <h4 class="text-center">Lista de Ejemplares</h4>
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Categoría</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="ejemplar : ${ejemplares}">
+                            <td th:text="${ejemplar.id}"></td>
+                            <td th:text="${ejemplar.nombre}"></td>
+                            <td th:text="${ejemplar.descripcion}"></td>
+                            <td th:text="${ejemplar.categoria}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </main>
 
