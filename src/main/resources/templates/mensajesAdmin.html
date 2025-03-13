@@ -15,15 +15,14 @@
     <!-- Navbar -->
     <nav class="navbar navbar-dark fixed-top">
         <div class="container-fluid d-flex justify-content-between align-items-center">
-            <!-- Botón del menú lateral -->
             <button class="btn btn-outline-light" id="menuToggle">☰ Menú</button>
             <a class="navbar-brand mx-auto" href="#">Viveros Acme</a>
 
             <!-- Menú de usuario -->
             <div class="dropdown">
-                <img src="user.png" alt="Usuario" class="user-img dropdown-toggle" id="userMenuToggle" data-bs-toggle="dropdown" aria-expanded="false">
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuToggle">
-                    <li><a class="dropdown-item" th:href="@{/inicio}">Cerrar Sesión</a></li>
+                <img src="user.png" alt="Usuario" class="user-img dropdown-toggle" id="userMenuToggle" data-bs-toggle="dropdown">
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" th:href="@{/logout}">Cerrar Sesión</a></li>
                 </ul>
             </div>
         </div>
@@ -44,26 +43,31 @@
         <h2 class="text-center">Gestión de Mensajes</h2>
 
         <!-- Mensajes de éxito y error -->
-        <div th:if="${successMessage}" class="alert alert-success text-center">
+        <div th:if="${successMessage}" class="alert alert-success text-center alert-dismissible fade show" role="alert">
             <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        <div th:if="${errorMessage}" class="alert alert-danger text-center">
+        <div th:if="${errorMessage}" class="alert alert-danger text-center alert-dismissible fade show" role="alert">
             <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
 
         <div class="row">
+            <!-- Formulario de Registro de Mensajes -->
             <div class="col-md-6">
                 <h5>Añadir Mensaje</h5>
-                <form th:action="@{/guardarMensaje}" method="post">
+                <form th:action="@{/guardarMensaje}" method="post" id="mensajeForm">
                     <div class="mb-3">
                         <label for="ejemplarSelect" class="form-label">Ejemplar</label>
                         <select id="ejemplarSelect" name="ejemplarId" class="form-select" required>
+                            <option value="">Seleccione un ejemplar</option>
                             <option th:each="ejemplar : ${ejemplares}" th:value="${ejemplar.id}" th:text="${ejemplar.nombre}"></option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label for="personaSelect" class="form-label">Usuario</label>
                         <select id="personaSelect" name="personaId" class="form-select" required>
+                            <option value="">Seleccione un usuario</option>
                             <option th:each="persona : ${personas}" th:value="${persona.id}" th:text="${persona.nombre}"></option>
                         </select>
                     </div>
@@ -75,6 +79,7 @@
                 </form>
             </div>
 
+            <!-- Listado de Mensajes -->
             <div class="col-md-6">
                 <h5>Listado de Mensajes</h5>
                 <div class="table-responsive">
@@ -112,6 +117,34 @@
             document.getElementById("sidebar").classList.remove("show");
             document.getElementById("overlay").classList.remove("show");
         });
+
+        // Validación antes de enviar el formulario
+        document.getElementById("mensajeForm").addEventListener("submit", function (event) {
+            let mensaje = document.getElementById("mensaje").value.trim();
+            let ejemplarSelect = document.getElementById("ejemplarSelect").value;
+            let personaSelect = document.getElementById("personaSelect").value;
+
+            if (mensaje === "") {
+                alert("El mensaje no puede estar vacío.");
+                event.preventDefault();
+            }
+
+            if (ejemplarSelect === "") {
+                alert("Debes seleccionar un ejemplar.");
+                event.preventDefault();
+            }
+
+            if (personaSelect === "") {
+                alert("Debes seleccionar un usuario.");
+                event.preventDefault();
+            }
+        });
+
+        // Ocultar mensajes de éxito/error después de unos segundos
+        setTimeout(() => {
+            let alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => alert.classList.add('fade'));
+        }, 5000);
     </script>
 
     <!-- Bootstrap JS -->

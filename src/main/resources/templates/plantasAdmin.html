@@ -22,13 +22,13 @@
             <div class="dropdown">
                 <img src="user.png" alt="Usuario" class="user-img dropdown-toggle" id="userMenuToggle" data-bs-toggle="dropdown" aria-expanded="false">
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuToggle">
-                    <li><a class="dropdown-item" th:href="@{/inicio}">Cerrar Sesión</a></li>
+                    <li><a class="dropdown-item" th:href="@{/logout}">Cerrar Sesión</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Sidebar Mejorado -->
+    <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
         <a th:href="@{/inicio}">🏡 Inicio</a>
         <a th:href="@{/plantasAdmin}">🌱 Gestión de Plantas</a>
@@ -44,10 +44,10 @@
         <h2 class="text-center">Gestión de Plantas</h2>
 
         <!-- Mensajes de Éxito o Error -->
-        <div th:if="${successMessage}" class="alert alert-success text-center">
+        <div th:if="${successMessage}" class="alert alert-success text-center fade-message">
             <span th:text="${successMessage}"></span>
         </div>
-        <div th:if="${errorMessage}" class="alert alert-danger text-center">
+        <div th:if="${errorMessage}" class="alert alert-danger text-center fade-message">
             <span th:text="${errorMessage}"></span>
         </div>
 
@@ -56,7 +56,7 @@
             <div class="col-md-6 mb-4">
                 <h5 id="tituloFormulario" th:text="${planta.id != null ? 'Editar Planta' : 'Añadir Planta'}"></h5>
                 <div class="form-container">
-                    <form th:action="@{/guardarPlanta}" method="post">
+                    <form th:action="@{/guardarPlanta}" method="post" id="plantaForm">
                         <input type="hidden" th:field="${planta.id}" id="plantaId">
                         <div class="mb-3">
                             <label for="codigo" class="form-label">Código</label>
@@ -70,7 +70,7 @@
                             <label for="scientificName" class="form-label">Nombre Científico</label>
                             <input type="text" class="form-control" id="scientificName" name="nombreCientifico" th:field="${planta.nombreCientifico}" required>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">
+                        <button type="submit" class="btn btn-primary w-100" id="submitBtn">
                             <span th:text="${planta.id == null ? 'Añadir Planta' : 'Guardar Cambios'}"></span>
                         </button>
                     </form>
@@ -99,7 +99,7 @@
                                     <td th:text="${planta.nombreComun}"></td>
                                     <td th:text="${planta.nombreCientifico}"></td>
                                     <td>
-                                        <a th:href="@{/editar/{id}(id=${planta.id})}" class="btn btn-sm btn-warning">Editar</a>
+                                        <a th:href="@{/editar/{id}(id=${planta.id})}" class="btn btn-sm btn-warning edit-btn">Editar</a>
                                     </td>
                                 </tr>
                             </tbody>
@@ -112,6 +112,7 @@
 
     <!-- JavaScript -->
     <script>
+        // Mostrar/ocultar el menú lateral
         document.getElementById("menuToggle").addEventListener("click", function () {
             document.getElementById("sidebar").classList.toggle("show");
             document.getElementById("overlay").classList.toggle("show");
@@ -121,6 +122,38 @@
             document.getElementById("sidebar").classList.remove("show");
             document.getElementById("overlay").classList.remove("show");
         });
+
+        // Validaciones antes de enviar el formulario
+        document.getElementById("plantaForm").addEventListener("submit", function (event) {
+            let codigo = document.getElementById("codigo").value;
+            let submitBtn = document.getElementById("submitBtn");
+
+            // Validar que el código solo contenga letras y sin espacios
+            if (!/^[A-Za-z]+$/.test(codigo)) {
+                alert("El código solo puede contener letras y sin espacios.");
+                event.preventDefault();
+                return;
+            }
+
+            // Deshabilitar botón para evitar múltiples envíos
+            submitBtn.disabled = true;
+        });
+
+        // Confirmación antes de editar
+        document.querySelectorAll(".edit-btn").forEach(function (btn) {
+            btn.addEventListener("click", function (event) {
+                if (!confirm("¿Estás seguro de que quieres editar esta planta?")) {
+                    event.preventDefault();
+                }
+            });
+        });
+
+        // Hacer que los mensajes desaparezcan después de 5 segundos
+        setTimeout(function () {
+            document.querySelectorAll(".fade-message").forEach(function (msg) {
+                msg.style.display = "none";
+            });
+        }, 5000);
     </script>
 
     <!-- Bootstrap JS -->

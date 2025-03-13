@@ -10,34 +10,38 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class CredencialesController {
 
-	@Autowired
-	private CredencialesServiceImpl credencialesService;
+    @Autowired
+    private CredencialesServiceImpl credencialesService;
 
-	@GetMapping("/login")
-	public String mostrarLogin() {
-		return "login";
-	}
+    // Muestra la página de login
+    @GetMapping("/login")
+    public String mostrarLogin() {
+        return "login";
+    }
 
-	@GetMapping("/logout")
-	public String logout(HttpSession session) {
-		session.invalidate(); // 🔹 Elimina la sesión completamente
-		return "redirect:/inicio"; // 🔹 Redirige a la página de inicio como usuario no autenticado
-	}
+    // Cierra sesión y redirige al inicio
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/inicio";
+    }
 
-	@PostMapping("/autenticar")
-	public String autenticar(@RequestParam String usuario, @RequestParam String password, HttpSession session) {
-		// 🔹 Buscar al usuario en la base de datos
-		Credenciales credenciales = credencialesService.obtenerUsuario(usuario);
+    // Autentica al usuario
+    @PostMapping("/autenticar")
+    public String autenticar(@RequestParam String usuario, @RequestParam String password, HttpSession session) {
+        if (usuario == null || password == null || usuario.trim().isEmpty() || password.trim().isEmpty()) {
+            return "redirect:/login?error=camposVacios";
+        }
 
-		// 🔹 Verificar si el usuario existe y la contraseña es correcta
-		if (credenciales != null && credenciales.getPassword().equals(password)) {
-			// 🔹 Almacenar los datos en la sesión
-			session.setAttribute("usuarioLogeado", usuario);
-			session.setAttribute("rol", credenciales.getRol());
+        Credenciales credenciales = credencialesService.obtenerUsuario(usuario);
 
-			return "redirect:/inicio"; // 🔹 Redirige a la página de inicio
-		}
+        if (credenciales == null || !credenciales.getPassword().equals(password)) {
+            return "redirect:/login?error=credencialesInvalidas";
+        }
 
-		return "redirect:/login?error=true"; // 🔹 Si falla, redirige al login con error
-	}
+        session.setAttribute("usuarioLogeado", usuario);
+        session.setAttribute("rol", credenciales.getRol());
+
+        return "redirect:/inicio";
+    }
 }

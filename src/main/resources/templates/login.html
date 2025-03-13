@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Viveros Acme - Login</title>
 
     <!-- Bootstrap CSS -->
@@ -12,13 +12,9 @@
 </head>
 
 <body>
-    <!-- Sidebar Mejorado -->
+    <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
         <a th:href="@{/inicio}">🏡 Inicio</a>
-        <a th:href="@{/plantas}">🌱 Gestión de Plantas</a>
-        <a th:href="@{/ejemplares}">🌿 Gestión de Ejemplares</a>
-        <a th:href="@{/mensaje}">📩 Gestión de Mensajes</a>
-        <a th:href="@{/persona}">👥 Gestión de Personas</a>
     </nav>
 
     <!-- Fondo Oscuro -->
@@ -28,33 +24,47 @@
         <div class="login-container">
             <h1 class="login-title">Viveros Acme</h1>
 
-            <!-- Mensaje de error si el login falla -->
-            <div th:if="${param.error}" class="alert alert-danger">
-                Credenciales incorrectas. Inténtelo de nuevo.
+            <!-- Mensajes de error -->
+            <div th:if="${param.error == 'credencialesInvalidas'}" class="alert alert-danger text-center">
+                Usuario o contraseña incorrectos.
+            </div>
+            <div th:if="${param.error == 'camposVacios'}" class="alert alert-warning text-center">
+                Todos los campos son obligatorios.
             </div>
 
-            <form th:action="@{/autenticar}" method="post">
+            <form th:action="@{/autenticar}" method="post" onsubmit="return validarLogin()">
                 <div class="mb-3">
                     <label for="usuario" class="form-label">Usuario</label>
-                    <input type="text" class="form-control" id="usuario" name="usuario" required placeholder="Ingrese su usuario" />
+                    <input type="text" class="form-control" id="usuario" name="usuario" required placeholder="Ingrese su usuario">
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Contraseña</label>
-                    <input type="password" class="form-control" id="password" name="password" required placeholder="Ingrese su contraseña" />
+                    <input type="password" class="form-control" id="password" name="password" required placeholder="Ingrese su contraseña">
                 </div>
-                <button type="submit" class="btn btn-login">Iniciar Sesión</button>
+                <button type="submit" class="btn btn-login w-100">Iniciar Sesión</button>
             </form>
         </div>
     </div>
 
     <!-- JavaScript -->
     <script>
-        document.getElementById("menuToggle").addEventListener("click", function () {
+        function validarLogin() {
+            let usuario = document.getElementById("usuario").value.trim();
+            let password = document.getElementById("password").value.trim();
+
+            if (usuario === "" || password === "") {
+                alert("Todos los campos son obligatorios.");
+                return false;
+            }
+            return true;
+        }
+
+        document.getElementById("menuToggle")?.addEventListener("click", function () {
             document.getElementById("sidebar").classList.toggle("show");
             document.getElementById("overlay").classList.toggle("show");
         });
 
-        document.getElementById("overlay").addEventListener("click", function () {
+        document.getElementById("overlay")?.addEventListener("click", function () {
             document.getElementById("sidebar").classList.remove("show");
             document.getElementById("overlay").classList.remove("show");
         });
