@@ -3,49 +3,60 @@ package com.dwes.models;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "credenciales")
 public class Credenciales {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(unique = true)
-    private String usuario;
-    private String password;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "persona_id")
-    private Persona persona;
+	@Column(nullable = false, unique = true)
+	private String usuario;
 
-    // Getters y Setters
-    public Long getId() {
-        return id;
-    }
+	@Column(nullable = false)
+	private String password;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	@Column(nullable = false) // 🔹 Nuevo campo para almacenar el rol
+	private String rol;
 
-    public String getUsuario() {
-        return usuario;
-    }
+	public Credenciales() {
+	}
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
+	public Credenciales(String usuario, String password, String rol) {
+		this.usuario = usuario;
+		this.password = password;
+		this.rol = rol;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Persona getPersona() {
-        return persona;
-    }
+	public String getUsuario() {
+		return usuario;
+	}
 
-    public void setPersona(Persona persona) {
-        this.persona = persona;
-    }
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getRol() { // 🔹 Nuevo getter
+		return rol;
+	}
+
+	public void setRol(String rol) { // 🔹 Nuevo setter
+		this.rol = rol;
+	}
 }

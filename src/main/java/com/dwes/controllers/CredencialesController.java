@@ -1,5 +1,6 @@
 package com.dwes.controllers;
 
+import com.dwes.models.Credenciales;
 import com.dwes.serviceImpl.CredencialesServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,26 +13,31 @@ public class CredencialesController {
 	@Autowired
 	private CredencialesServiceImpl credencialesService;
 
-	// Muestra la página de login
 	@GetMapping("/login")
 	public String mostrarLogin() {
 		return "login";
 	}
 
-	// Cierra sesión y redirige a login
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
-		session.invalidate(); // Elimina la sesión
-		return "redirect:/inicio"; // Redirige a inicio como usuario no logeado
+		session.invalidate(); // 🔹 Elimina la sesión completamente
+		return "redirect:/inicio"; // 🔹 Redirige a la página de inicio como usuario no autenticado
 	}
 
-	// Autenticar usuario
 	@PostMapping("/autenticar")
 	public String autenticar(@RequestParam String usuario, @RequestParam String password, HttpSession session) {
-		if (credencialesService.autenticar(usuario, password)) {
-			session.setAttribute("usuarioLogeado", usuario); // Guarda el usuario en la sesión
-			return "redirect:/inicio";
+		// 🔹 Buscar al usuario en la base de datos
+		Credenciales credenciales = credencialesService.obtenerUsuario(usuario);
+
+		// 🔹 Verificar si el usuario existe y la contraseña es correcta
+		if (credenciales != null && credenciales.getPassword().equals(password)) {
+			// 🔹 Almacenar los datos en la sesión
+			session.setAttribute("usuarioLogeado", usuario);
+			session.setAttribute("rol", credenciales.getRol());
+
+			return "redirect:/inicio"; // 🔹 Redirige a la página de inicio
 		}
-		return "redirect:/login?error=true";
+
+		return "redirect:/login?error=true"; // 🔹 Si falla, redirige al login con error
 	}
 }

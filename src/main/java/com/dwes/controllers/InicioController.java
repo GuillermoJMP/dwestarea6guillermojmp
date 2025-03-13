@@ -1,7 +1,9 @@
 package com.dwes.controllers;
 
 import com.dwes.models.Planta;
+import com.dwes.models.Ejemplar;
 import com.dwes.services.PlantaService;
+import com.dwes.services.EjemplarService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,29 +15,47 @@ import java.util.List;
 @Controller
 public class InicioController {
 
-    @Autowired
-    private PlantaService plantaService;
+	@Autowired
+	private PlantaService plantaService;
 
-    // Página de inicio
-    @GetMapping("/inicio")
-    public String mostrarInicio(Model model, HttpSession session) {
-        List<Planta> plantas = plantaService.listarTodas();
-        List<Ejemplar> ejemplares = ejemplarService.listarTodos();
-        
-        model.addAttribute("plantas", plantas);
-        model.addAttribute("ejemplares", ejemplares); // Añadir ejemplares al modelo
+	@Autowired
+	private EjemplarService ejemplarService; // 🔹 Inyección corregida
 
-        String usuarioLogeado = (String) session.getAttribute("usuarioLogeado");
+	// Página de inicio
+	@GetMapping("/inicio")
+	public String mostrarInicio(Model model, HttpSession session) {
+		// Obtener la lista de plantas y ejemplares
+		List<Planta> plantas = plantaService.listarTodas();
+		List<Ejemplar> ejemplares = ejemplarService.listarTodos();
 
-        if (usuarioLogeado != null) {
-            model.addAttribute("nombreUsuario", usuarioLogeado);
-            model.addAttribute("mensajeBienvenida", "Bienvenido, " + usuarioLogeado);
-        } else {
-            model.addAttribute("nombreUsuario", "Visitante");
-            model.addAttribute("mensajeBienvenida", "Bienvenido a Viveros Acme. Inicia sesión para más opciones.");
-        }
+		model.addAttribute("plantas", plantas);
+		model.addAttribute("ejemplares", ejemplares);
 
-        return "inicio";
-    }
+		// 🔹 Obtener datos de sesión
+		String usuarioLogeado = (String) session.getAttribute("usuarioLogeado");
+		String rolUsuario = (String) session.getAttribute("rol"); // 🔹 Obtener el rol del usuario
 
+		// 🔹 Definir mensaje y permisos según el usuario
+		if (usuarioLogeado == null) {
+			model.addAttribute("nombreUsuario", "Invitado");
+			model.addAttribute("mensaje",
+					"Bienvenido a Viveros Acme. Inicia sesión para acceder a más funcionalidades.");
+			model.addAttribute("rol", "INVITADO"); // 🔹 Definir el rol como INVITADO
+		} else {
+			model.addAttribute("nombreUsuario", usuarioLogeado);
+
+			if ("ADMIN".equalsIgnoreCase(rolUsuario)) {
+				model.addAttribute("mensaje", "Bienvenido, Administrador. Tienes acceso total al sistema.");
+			} else if ("PERSONAL".equalsIgnoreCase(rolUsuario)) {
+				model.addAttribute("mensaje",
+						"Bienvenido, " + usuarioLogeado + ". Puedes registrar y gestionar ejemplares.");
+			} else {
+				model.addAttribute("mensaje", "Bienvenido, " + usuarioLogeado + "!");
+			}
+
+			model.addAttribute("rol", rolUsuario);
+		}
+
+		return "inicio";
+	}
 }
