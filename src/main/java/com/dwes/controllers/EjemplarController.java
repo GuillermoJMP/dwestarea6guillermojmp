@@ -45,6 +45,14 @@ public class EjemplarController {
         }
 
         List<Ejemplar> ejemplares = (plantaId == null) ? ejemplarService.listarTodos() : ejemplarService.filtrarPorPlanta(plantaId);
+
+        // 🔹 Agregar número de mensajes y última fecha de mensaje
+        for (Ejemplar ejemplar : ejemplares) {
+            ejemplar.setNumeroMensajes(ejemplarService.contarMensajesPorEjemplar(ejemplar.getId()));
+            ejemplar.setUltimoMensaje(ejemplarService.obtenerUltimaFechaMensaje(ejemplar.getId()));  // ✅ Ahora devuelve LocalDateTime
+        }
+
+
         model.addAttribute("plantas", plantaService.listarTodas());
         model.addAttribute("ejemplares", ejemplares);
         model.addAttribute("plantaSeleccionada", plantaId);
@@ -87,7 +95,7 @@ public class EjemplarController {
             mensajeInicial.setEjemplar(ejemplar);
             mensajeInicial.setMensaje("Ejemplar creado por " + usuarioLogeado);
             mensajeInicial.setFechaHora(LocalDateTime.now());
-            mensajeInicial.setPersona(personaLogeada);  // Corregido el set de usuario
+            mensajeInicial.setPersona(personaLogeada);  
             mensajeService.guardar(mensajeInicial);
 
             redirectAttributes.addFlashAttribute("successMessage", "Ejemplar registrado correctamente.");
@@ -96,30 +104,5 @@ public class EjemplarController {
         }
 
         return "redirect:/ejemplaresAdmin";
-    }
-
-    // Ver los mensajes de un ejemplar en orden cronológico
-    @GetMapping("/verMensajes/{id}")
-    public String verMensajes(@PathVariable Long id, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
-        String rol = (String) session.getAttribute("rol");
-
-        if (rol == null || (!rol.equals("ADMIN") && !rol.equals("PERSONAL"))) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Acceso denegado. No tienes permisos.");
-            return "redirect:/inicio";
-        }
-
-        Optional<Ejemplar> ejemplarOptional = ejemplarService.obtenerPorId(id);
-
-        if (ejemplarOptional.isPresent()) {
-            Ejemplar ejemplar = ejemplarOptional.get();
-            List<Mensaje> mensajes = mensajeService.buscarPorEjemplar(id); // Método corregido
-
-            model.addAttribute("ejemplar", ejemplar);
-            model.addAttribute("mensajes", mensajes);
-            return "mensajesEjemplar";
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Ejemplar no encontrado.");
-            return "redirect:/ejemplaresAdmin";
-        }
     }
 }
