@@ -20,6 +20,12 @@ public class Ejemplar {
     @OneToMany(mappedBy = "ejemplar", cascade = CascadeType.ALL)
     private List<Mensaje> mensajes;
 
+    @Transient  
+    private int numeroMensajes;
+
+    @Transient  
+    private LocalDateTime ultimoMensaje;  // ✅ Cambiado de String a LocalDateTime
+
     // Getters y Setters
     public Long getId() {
         return id;
@@ -53,16 +59,19 @@ public class Ejemplar {
         this.mensajes = mensajes;
     }
 
-    // Métodos adicionales para Thymeleaf
     public int getNumeroMensajes() {
-        return (mensajes != null) ? mensajes.size() : 0;
+        return numeroMensajes;
     }
 
-    public String getUltimoMensaje() {
-        if (mensajes != null && !mensajes.isEmpty()) {
-            LocalDateTime fechaHora = mensajes.get(mensajes.size() - 1).getFechaHora();
-            return fechaHora.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-        }
-        return "Sin mensajes";
+    public void setNumeroMensajes(int numeroMensajes) {
+        this.numeroMensajes = numeroMensajes;
+    }
+
+    public LocalDateTime getUltimoMensaje() {
+        return ultimoMensaje;
+    }
+
+    public void setUltimoMensaje(LocalDateTime ultimoMensaje) {
+        this.ultimoMensaje = ultimoMensaje;
     }
 }

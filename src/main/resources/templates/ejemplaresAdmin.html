@@ -110,8 +110,8 @@
                             <td th:text="${ejemplar.id}"></td>
                             <td th:text="${ejemplar.planta.codigo + '_' + ejemplar.id}"></td> <!-- Generación automática -->
                             <td th:text="${ejemplar.planta.nombreComun}"></td>
-                            <td th:text="${ejemplar.numeroMensajes}"></td>
-                            <td th:text="${ejemplar.ultimoMensaje}"></td>
+                            <td th:text="${ejemplar.numeroMensajes}"></td> <!-- ✅ Número de mensajes -->
+                            <td th:text="${#temporals.format(ejemplar.ultimoMensaje, 'dd/MM/yyyy HH:mm')}"></td> <!-- ✅ Último mensaje -->
                             <td>
                                 <a th:href="@{/verMensajes/{id}(id=${ejemplar.id})}" class="btn btn-sm btn-info">Ver Mensajes</a>
                             </td>
