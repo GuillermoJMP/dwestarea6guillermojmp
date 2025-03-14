@@ -3,46 +3,37 @@ package com.dwes.serviceImpl;
 import com.dwes.models.Ejemplar;
 import com.dwes.repositories.EjemplarRepository;
 import com.dwes.services.EjemplarService;
-import jakarta.transaction.Transactional;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EjemplarServiceImpl implements EjemplarService {
 
-    @Autowired
-    private EjemplarRepository ejemplarRepository;
+    private final EjemplarRepository ejemplarRepository;
 
-    @Override
-    public List<Ejemplar> listarTodos() {
-        List<Ejemplar> ejemplares = ejemplarRepository.findAll();
-        
-        // Forzar la carga de mensajes para cada ejemplar
-        for (Ejemplar e : ejemplares) {
-            e.getNumeroMensajes();  // Inicializa la cantidad de mensajes
-            e.getUltimoMensaje();   // Obtiene el último mensaje
-        }
-        
-        return ejemplares;
+    public EjemplarServiceImpl(EjemplarRepository ejemplarRepository) {
+        this.ejemplarRepository = ejemplarRepository;
     }
 
     @Override
-    @Transactional
+    public List<Ejemplar> listarTodos() {
+        return ejemplarRepository.findAll();
+    }
+
+    @Override
     public Ejemplar guardar(Ejemplar ejemplar) {
         return ejemplarRepository.save(ejemplar);
     }
 
     @Override
-    public Ejemplar obtenerPorId(Long id) {
-        return ejemplarRepository.findById(id).orElse(null);
+    public Optional<Ejemplar> obtenerPorId(Long id) {
+        return ejemplarRepository.findById(id);
     }
 
     @Override
     public List<Ejemplar> filtrarPorPlanta(Long plantaId) {
         return ejemplarRepository.findByPlantaId(plantaId);
     }
-    
-    
 }

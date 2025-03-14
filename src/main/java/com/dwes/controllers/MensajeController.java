@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class MensajeController {
@@ -93,7 +94,8 @@ public class MensajeController {
         }
 
         Persona persona = personaService.obtenerPorId(personaId);
-        Ejemplar ejemplar = ejemplarService.obtenerPorId(ejemplarId);
+        Optional<Ejemplar> ejemplarOptional = ejemplarService.obtenerPorId(ejemplarId);
+        Ejemplar ejemplar = ejemplarOptional.orElse(null);
 
         if (persona == null || ejemplar == null) {
             redirectAttributes.addFlashAttribute("errorMessage", "Debe seleccionar un usuario y un ejemplar válidos.");

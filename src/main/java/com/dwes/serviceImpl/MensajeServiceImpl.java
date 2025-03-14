@@ -43,4 +43,9 @@ public class MensajeServiceImpl implements MensajeService {
     public List<Mensaje> buscarPorRangoFechas(LocalDateTime inicio, LocalDateTime fin) {
         return mensajeRepository.findByFechaHoraBetween(inicio, fin);
     }
+
+    @Override
+    public List<Mensaje> obtenerMensajesPorEjemplarOrdenados(Long ejemplarId) {
+        return mensajeRepository.findByEjemplarIdOrderByFechaHoraAsc(ejemplarId);
+    }
 }
