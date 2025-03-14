@@ -2,7 +2,6 @@ package com.dwes.models;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Entity
@@ -24,7 +23,7 @@ public class Ejemplar {
     private int numeroMensajes;
 
     @Transient  
-    private LocalDateTime ultimoMensaje;  // ✅ Cambiado de String a LocalDateTime
+    private LocalDateTime ultimoMensaje;
 
     // Getters y Setters
     public Long getId() {

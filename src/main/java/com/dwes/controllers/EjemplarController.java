@@ -46,12 +46,11 @@ public class EjemplarController {
 
         List<Ejemplar> ejemplares = (plantaId == null) ? ejemplarService.listarTodos() : ejemplarService.filtrarPorPlanta(plantaId);
 
-        // 🔹 Agregar número de mensajes y última fecha de mensaje
+        // Para cada ejemplar se asigna el número de mensajes y la fecha del último mensaje
         for (Ejemplar ejemplar : ejemplares) {
             ejemplar.setNumeroMensajes(ejemplarService.contarMensajesPorEjemplar(ejemplar.getId()));
-            ejemplar.setUltimoMensaje(ejemplarService.obtenerUltimaFechaMensaje(ejemplar.getId()));  // ✅ Ahora devuelve LocalDateTime
+            ejemplar.setUltimoMensaje(ejemplarService.obtenerUltimaFechaMensaje(ejemplar.getId()));
         }
-
 
         model.addAttribute("plantas", plantaService.listarTodas());
         model.addAttribute("ejemplares", ejemplares);
@@ -77,7 +76,7 @@ public class EjemplarController {
             Ejemplar ejemplar = new Ejemplar();
             ejemplar.setPlanta(selectedPlanta);
 
-            // Guardar ejemplar sin nombre y obtener su ID
+            // Guardar ejemplar sin nombre para obtener su ID
             ejemplar = ejemplarService.guardar(ejemplar);
             ejemplar.setNombre(selectedPlanta.getCodigo() + "_" + ejemplar.getId());
 
@@ -95,7 +94,7 @@ public class EjemplarController {
             mensajeInicial.setEjemplar(ejemplar);
             mensajeInicial.setMensaje("Ejemplar creado por " + usuarioLogeado);
             mensajeInicial.setFechaHora(LocalDateTime.now());
-            mensajeInicial.setPersona(personaLogeada);  
+            mensajeInicial.setPersona(personaLogeada);
             mensajeService.guardar(mensajeInicial);
 
             redirectAttributes.addFlashAttribute("successMessage", "Ejemplar registrado correctamente.");
