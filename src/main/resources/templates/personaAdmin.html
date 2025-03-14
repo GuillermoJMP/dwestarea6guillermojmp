@@ -5,73 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Viveros Acme - Gestión de Personas</title>
 
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="personaAdmin.css">
 </head>
 
 <body data-page="personas">
-    <!-- Navbar -->
-    <nav class="navbar navbar-dark fixed-top">
-        <div class="container-fluid d-flex justify-content-between align-items-center">
-            <button class="btn btn-outline-light" id="menuToggle">☰ Menú</button>
-            <a class="navbar-brand mx-auto" href="#">Viveros Acme</a>
+	<!-- Navbar -->
+	<nav class="navbar navbar-dark fixed-top">
+		<div
+			class="container-fluid d-flex justify-content-between align-items-center">
+			<button class="btn btn-outline-light" id="menuToggle">☰ Menú</button>
+			<a class="navbar-brand mx-auto" href="#">Viveros Acme</a>
 
-            <!-- Usuario -->
-            <div class="dropdown">
-                <img src="user.png" alt="Usuario" class="user-img dropdown-toggle" id="userMenuToggle" data-bs-toggle="dropdown" aria-expanded="false">
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuToggle">
-                    <li><a class="dropdown-item" th:href="@{/perfil}">Perfil</a></li>
-                    <li><a class="dropdown-item" th:href="@{/login}">Cerrar Sesión</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+			<!-- Usuario -->
+			<div class="dropdown" th:if="${rol != 'INVITADO'}">
+				<img src="user.png" alt="Usuario" class="user-img dropdown-toggle"
+					id="userMenuToggle" data-bs-toggle="dropdown" aria-expanded="false">
+				<ul class="dropdown-menu dropdown-menu-end"
+					aria-labelledby="userMenuToggle">
+					<li><a class="dropdown-item" href="#"
+						onclick="logoutAndRedirect()">Cerrar Sesión</a></li>
+				</ul>
+			</div>
 
-    <!-- Sidebar -->
+			<!-- Botón de "Iniciar Sesión" solo para invitados -->
+			<div th:if="${rol == 'INVITADO'}">
+				<a class="btn btn-light" th:href="@{/login}">Iniciar Sesión</a>
+			</div>
+		</div>
+	</nav>
+
+
     <nav class="sidebar" id="sidebar">
         <a th:href="@{/inicio}">🏡 Inicio</a>
-        <a th:href="@{/plantasAdmin}">🌱 Gestión de Plantas</a>
-        <a th:href="@{/ejemplaresAdmin}">🌿 Gestión de Ejemplares</a>
-        <a th:href="@{/mensajesAdmin}">📩 Gestión de Mensajes</a>
-        <a th:href="@{/personaAdmin}">👥 Gestión de Personas</a>
+        <a th:href="@{/plantasAdmin}" th:if="${session.rol == 'ADMIN'}">🌱 Gestión de Plantas</a>
+        <a th:href="@{/ejemplaresAdmin}" th:if="${session.rol == 'ADMIN' or session.rol == 'PERSONAL'}">🌿 Gestión de Ejemplares</a>
+        <a th:href="@{/mensajesAdmin}" th:if="${session.rol == 'ADMIN' or session.rol == 'PERSONAL'}">📩 Gestión de Mensajes</a>
+        <a th:href="@{/personaAdmin}" th:if="${session.rol == 'ADMIN'}">👥 Gestión de Personas</a>
     </nav>
 
     <div class="overlay" id="overlay"></div>
+
 
     <!-- Contenido Principal -->
     <main class="container mt-5 main-content">
         <h2 class="text-center">Gestión de Personas</h2>
 
-        <!-- Mensajes de Éxito o Error -->
-        <div th:if="${successMessage}" class="alert alert-success text-center">
+        <!-- Mensajes de alerta -->
+        <div th:if="${successMessage}" class="alert alert-success text-center" id="mensajeExito">
             <span th:text="${successMessage}"></span>
         </div>
-        <div th:if="${errorMessage}" class="alert alert-danger text-center">
+        <div th:if="${errorMessage}" class="alert alert-danger text-center" id="mensajeError">
             <span th:text="${errorMessage}"></span>
         </div>
 
         <div class="row">
             <!-- Formulario de Registro -->
-            <div class="col-md-6 mb-4">
+            <div class="col-md-6 mb-4" th:if="${session.rol == 'ADMIN'}">
                 <h5>Registrar Persona</h5>
                 <div class="form-container">
-                    <form th:action="@{/guardarPersona}" method="post" id="personaForm">
+                    <form id="personaForm" th:action="@{/guardarPersona}" method="post">
                         <div class="mb-3">
-                            <label for="personName" class="form-label">Nombre</label>
+                            <label class="form-label">Nombre</label>
                             <input type="text" class="form-control" id="personName" name="nombre" required>
                         </div>
                         <div class="mb-3">
-                            <label for="personEmail" class="form-label">Correo Electrónico</label>
+                            <label class="form-label">Correo Electrónico</label>
                             <input type="email" class="form-control" id="personEmail" name="email" required>
                         </div>
                         <div class="mb-3">
-                            <label for="personUser" class="form-label">Nombre de Usuario</label>
+                            <label class="form-label">Nombre de Usuario</label>
                             <input type="text" class="form-control" id="personUser" name="usuario" required pattern="^[a-zA-Z0-9]+$" title="Solo letras y números, sin espacios.">
                         </div>
                         <div class="mb-3">
-                            <label for="personPassword" class="form-label">Contraseña</label>
+                            <label class="form-label">Contraseña</label>
                             <input type="password" class="form-control" id="personPassword" name="password" required minlength="6" pattern="^\S+$" title="No puede contener espacios y debe tener al menos 6 caracteres.">
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Registrar Persona</button>
@@ -108,35 +116,58 @@
         </div>
     </main>
 
-    <!-- JavaScript para manejar menú lateral -->
     <script>
-        document.getElementById("menuToggle").addEventListener("click", function () {
-            document.getElementById("sidebar").classList.toggle("show");
-            document.getElementById("overlay").classList.toggle("show");
-        });
+        document.addEventListener("DOMContentLoaded", function () {
+            // Ocultar mensajes de éxito/error después de 3 segundos
+            setTimeout(function () {
+                let mensajeExito = document.getElementById("mensajeExito");
+                let mensajeError = document.getElementById("mensajeError");
+                if (mensajeExito) mensajeExito.style.display = "none";
+                if (mensajeError) mensajeError.style.display = "none";
+            }, 3000);
 
-        document.getElementById("overlay").addEventListener("click", function () {
-            document.getElementById("sidebar").classList.remove("show");
-            document.getElementById("overlay").classList.remove("show");
-        });
+            // Validaciones del formulario
+            let formulario = document.getElementById("personaForm");
+            formulario.addEventListener("submit", function (event) {
+                let usuario = document.getElementById("personUser").value;
+                let password = document.getElementById("personPassword").value;
 
-        // Validación adicional en JavaScript
-        document.getElementById("personaForm").addEventListener("submit", function (event) {
-            let usuario = document.getElementById("personUser").value;
-            let password = document.getElementById("personPassword").value;
+                if (!/^[a-zA-Z0-9]+$/.test(usuario)) {
+                    alert("El nombre de usuario solo puede contener letras y números, sin espacios.");
+                    event.preventDefault();
+                }
+                if (/\s/.test(password)) {
+                    alert("La contraseña no puede contener espacios.");
+                    event.preventDefault();
+                }
+            });
 
-            if (!/^[a-zA-Z0-9]+$/.test(usuario)) {
-                alert("El nombre de usuario solo puede contener letras y números, sin espacios.");
-                event.preventDefault();
-            }
-            if (/\s/.test(password)) {
-                alert("La contraseña no puede contener espacios.");
-                event.preventDefault();
-            }
+            // Manejo del menú lateral
+            document.getElementById("menuToggle").addEventListener("click", function () {
+                document.getElementById("sidebar").classList.toggle("show");
+                document.getElementById("overlay").classList.toggle("show");
+            });
+
+            document.getElementById("overlay").addEventListener("click", function () {
+                document.getElementById("sidebar").classList.remove("show");
+                document.getElementById("overlay").classList.remove("show");
+            });
         });
     </script>
+    
+    <script>
+    function logoutAndRedirect() {
+        fetch('/logout', { method: 'GET' }) 
+            .then(() => {
+                sessionStorage.clear(); 
+                window.location.href = '/inicio'; 
+            })
+            .catch(() => {
+                window.location.href = '/inicio'; 
+            });
+    }
+</script>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>

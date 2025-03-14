@@ -2,6 +2,7 @@ package com.dwes.controllers;
 
 import com.dwes.models.Planta;
 import com.dwes.services.PlantaService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,12 +18,37 @@ public class InicioController {
 
     // Página de inicio
     @GetMapping("/inicio")
-    public String mostrarInicio(Model model) {
-        List<Planta> plantas = plantaService.listarTodas();
+    public String mostrarInicio(Model model, HttpSession session) {
+        // Obtener lista de plantas y asegurarse de que están ordenadas
+        List<Planta> plantas = plantaService.listarTodas(); // Asegurar que se devuelven ordenadas
         model.addAttribute("plantas", plantas);
 
-        // Simulación de usuario (cambiar esto con autenticación real)
-        model.addAttribute("nombreUsuario", "Administrador");
+        // Obtener usuario y rol desde la sesión
+        String usuarioLogeado = (String) session.getAttribute("usuarioLogeado");
+        String rolUsuario = (String) session.getAttribute("rol");
+
+        // Definir valores predeterminados si no hay sesión
+        if (usuarioLogeado == null) {
+            model.addAttribute("nombreUsuario", "Invitado");
+            model.addAttribute("mensaje", "Bienvenido a Viveros Acme. Inicia sesión para acceder a más funcionalidades.");
+            model.addAttribute("rol", "INVITADO");
+        } else {
+            model.addAttribute("nombreUsuario", usuarioLogeado);
+            model.addAttribute("rol", rolUsuario);
+
+            // Mensajes personalizados según el rol
+            switch (rolUsuario) {
+                case "ADMIN":
+                    model.addAttribute("mensaje", "Bienvenido, Administrador. Tienes acceso total al sistema.");
+                    break;
+                case "PERSONAL":
+                    model.addAttribute("mensaje", "Bienvenido, " + usuarioLogeado + ". Puedes registrar y gestionar ejemplares.");
+                    break;
+                default:
+                    model.addAttribute("mensaje", "Bienvenido, " + usuarioLogeado + "!");
+                    break;
+            }
+        }
 
         return "inicio";
     }

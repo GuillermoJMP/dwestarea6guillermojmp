@@ -2,6 +2,7 @@ package com.dwes.controllers;
 
 import com.dwes.models.Planta;
 import com.dwes.services.PlantaService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,73 +18,69 @@ public class PlantaController {
     @Autowired
     private PlantaService plantaService;
 
-    // Listar todas las plantas ordenadas por nombre común
     @GetMapping("/plantasAdmin")
-    public String listar(Model model) {
+    public String listar(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        if (!esAdministrador(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Acceso denegado. No tienes permisos.");
+            return "redirect:/inicio";
+        }
+
         List<Planta> plantas = plantaService.listarTodasOrdenadas();
         model.addAttribute("plantas", plantas);
-
-        // Si no existe un objeto "planta" en el modelo, lo creamos vacío
-        if (!model.containsAttribute("planta")) {
-            model.addAttribute("planta", new Planta());
-        }
+        model.addAttribute("planta", new Planta());
 
         return "plantasAdmin";
     }
 
-    // Guardar o actualizar una planta
     @PostMapping("/guardarPlanta")
-    public String guardar(@ModelAttribute Planta planta, RedirectAttributes redirectAttributes) {
-        // Validar campos obligatorios
-        if (planta.getCodigo().trim().isEmpty() || planta.getNombreComun().trim().isEmpty()
-                || planta.getNombreCientifico().trim().isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Todos los campos son obligatorios.");
-            return "redirect:/plantasAdmin";
+    public String guardar(@ModelAttribute Planta planta, RedirectAttributes redirectAttributes, HttpSession session) {
+        if (!esAdministrador(session)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Acceso denegado. No tienes permisos.");
+            return "redirect:/inicio";
         }
 
-        // Validar que el código solo contenga letras y sin espacios
-        String codigoNormalizado = planta.getCodigo().replaceAll("\\s+", "").toUpperCase();
-        if (!codigoNormalizado.matches("[A-Za-z]+")) {
-            redirectAttributes.addFlashAttribute("errorMessage", "El código solo puede contener letras y sin espacios.");
-            return "redirect:/plantasAdmin";
-        }
-        planta.setCodigo(codigoNormalizado);
-
-        // Verificar si el código ya existe (solo si es una nueva planta)
-        if (planta.getId() == null && plantaService.existeCodigo(codigoNormalizado)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "El código ya está en uso.");
-            return "redirect:/plantasAdmin";
-        }
-
-        // Verificar si el nombre común o científico ya existen en nuevas plantas
-        if (planta.getId() == null) {
-            if (plantaService.existeNombreComun(planta.getNombreComun())) {
-                redirectAttributes.addFlashAttribute("errorMessage", "El nombre común ya está en uso.");
+        // Si es edición, recuperamos la planta de la BD para NO permitir modificar el código (CU4B)
+        if (planta.getId() != null) {
+            Optional<Planta> plantaExistenteOpt = plantaService.obtenerPorId(planta.getId());
+            if (plantaExistenteOpt.isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "La planta que intentas editar no existe.");
                 return "redirect:/plantasAdmin";
             }
-            if (plantaService.existeNombreCientifico(planta.getNombreCientifico())) {
-                redirectAttributes.addFlashAttribute("errorMessage", "El nombre científico ya está en uso.");
+            // Se conserva el código original de la BD
+            planta.setCodigo(plantaExistenteOpt.get().getCodigo());
+        } else {
+            // Validación de campos en alta (CU4A)
+            if (planta.getCodigo().trim().isEmpty() || planta.getNombreComun().trim().isEmpty()
+                    || planta.getNombreCientifico().trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Todos los campos son obligatorios.");
+                return "redirect:/plantasAdmin";
+            }
+
+            // Normalización: quitar espacios, convertir a mayúsculas
+            String codigoNormalizado = planta.getCodigo().replaceAll("\\s+", "").toUpperCase();
+            planta.setCodigo(codigoNormalizado);
+
+            // Validación de unicidad de código en alta
+            if (plantaService.existeCodigo(codigoNormalizado)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "El código ya está en uso.");
                 return "redirect:/plantasAdmin";
             }
         }
 
-        // Guardar la planta en la base de datos
+        // Guardamos la planta (alta o edición)
         plantaService.guardar(planta);
         redirectAttributes.addFlashAttribute("successMessage", "Planta guardada correctamente.");
         return "redirect:/plantasAdmin";
     }
 
-    // Cargar datos de una planta para edición sin salir de la página
-    @GetMapping("/editar/{id}")
-    public String buscarPorId(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        Optional<Planta> planta = plantaService.obtenerPorId(id);
-        
-        if (planta.isPresent()) {
-            redirectAttributes.addFlashAttribute("planta", planta.get());
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Planta no encontrada.");
-        }
+    @GetMapping("/obtenerPlanta/{id}")
+    @ResponseBody
+    public Optional<Planta> obtenerPlanta(@PathVariable Long id) {
+        return plantaService.obtenerPorId(id);
+    }
 
-        return "redirect:/plantasAdmin";
+    private boolean esAdministrador(HttpSession session) {
+        String rol = (String) session.getAttribute("rol");
+        return rol != null && rol.equals("ADMIN");
     }
 }

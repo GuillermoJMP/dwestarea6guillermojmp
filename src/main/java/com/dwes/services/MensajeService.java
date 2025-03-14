@@ -10,4 +10,5 @@ public interface MensajeService {
     List<Mensaje> buscarPorPersona(Long personaId);
     List<Mensaje> buscarPorEjemplar(Long ejemplarId);
     List<Mensaje> buscarPorRangoFechas(LocalDateTime inicio, LocalDateTime fin);
+    List<Mensaje> obtenerMensajesPorEjemplarOrdenados(Long ejemplarId);
 }

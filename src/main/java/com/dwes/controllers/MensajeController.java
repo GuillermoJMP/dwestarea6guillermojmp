@@ -7,14 +7,17 @@ import com.dwes.services.MensajeService;
 import com.dwes.services.PersonaService;
 import com.dwes.services.EjemplarService;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class MensajeController {
@@ -34,7 +37,16 @@ public class MensajeController {
                          @RequestParam(required = false) Long personaId,
                          @RequestParam(required = false) String inicio,
                          @RequestParam(required = false) String fin,
-                         Model model) {
+                         Model model,
+                         HttpSession session,
+                         RedirectAttributes redirectAttributes) {
+
+        String rol = (String) session.getAttribute("rol");
+
+        if (rol == null || (!rol.equals("ADMIN") && !rol.equals("PERSONAL"))) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Acceso denegado. No tienes permisos.");
+            return "redirect:/inicio";
+        }
 
         List<Mensaje> mensajes;
 
@@ -51,14 +63,14 @@ public class MensajeController {
                 mensajes = mensajeService.listarTodos();
             }
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Error al filtrar mensajes.");
-            mensajes = mensajeService.listarTodos();
+            redirectAttributes.addFlashAttribute("errorMessage", "Error al filtrar mensajes.");
+            return "redirect:/mensajesAdmin";
         }
 
         model.addAttribute("mensajes", mensajes);
         model.addAttribute("ejemplares", ejemplarService.listarTodos());
         model.addAttribute("personas", personaService.listarTodos());
-        return "mensajesAdmin"; // Corregido para coincidir con la vista
+        return "mensajesAdmin";
     }
 
     // Guardar mensaje desde la misma página
@@ -66,18 +78,27 @@ public class MensajeController {
     public String guardar(@RequestParam String anotacion,
                           @RequestParam Long ejemplarId,
                           @RequestParam Long personaId,
-                          Model model) {
+                          HttpSession session,
+                          RedirectAttributes redirectAttributes) {
+
+        String rol = (String) session.getAttribute("rol");
+
+        if (rol == null || (!rol.equals("ADMIN") && !rol.equals("PERSONAL"))) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Acceso denegado. No tienes permisos.");
+            return "redirect:/inicio";
+        }
 
         if (anotacion == null || anotacion.trim().isEmpty()) {
-            model.addAttribute("errorMessage", "El mensaje no puede estar vacío.");
+            redirectAttributes.addFlashAttribute("errorMessage", "El mensaje no puede estar vacío.");
             return "redirect:/mensajesAdmin";
         }
 
         Persona persona = personaService.obtenerPorId(personaId);
-        Ejemplar ejemplar = ejemplarService.obtenerPorId(ejemplarId);
+        Optional<Ejemplar> ejemplarOptional = ejemplarService.obtenerPorId(ejemplarId);
+        Ejemplar ejemplar = ejemplarOptional.orElse(null);
 
         if (persona == null || ejemplar == null) {
-            model.addAttribute("errorMessage", "Debe seleccionar un usuario y un ejemplar válidos.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Debe seleccionar un usuario y un ejemplar válidos.");
             return "redirect:/mensajesAdmin";
         }
 
@@ -88,6 +109,7 @@ public class MensajeController {
         mensaje.setEjemplar(ejemplar);
         mensajeService.guardar(mensaje);
 
+        redirectAttributes.addFlashAttribute("successMessage", "Mensaje guardado correctamente.");
         return "redirect:/mensajesAdmin";
     }
 }
