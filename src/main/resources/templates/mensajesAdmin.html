@@ -102,7 +102,7 @@
                                 <td th:text="${#temporals.format(mensaje.fechaHora, 'dd/MM/yyyy HH:mm')}"></td>
                                 <td th:text="${mensaje.persona.nombre}"></td>
                                 <td th:text="${mensaje.ejemplar.nombre}"></td>
-                                <td th:text="${mensaje.anotacion}"></td> <!-- ✅ Corregido -->
+                                <td th:text="${mensaje.mensaje}"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -153,16 +153,16 @@
     </script>
     
     <script>
-    function logoutAndRedirect() {
-        fetch('/logout', { method: 'GET' }) 
-            .then(() => {
-                sessionStorage.clear(); 
-                window.location.href = '/inicio'; 
-            })
-            .catch(() => {
-                window.location.href = '/inicio'; 
-            });
-    }
+        function logoutAndRedirect() {
+            fetch('/logout', { method: 'GET' })
+                .then(() => {
+                    sessionStorage.clear();
+                    window.location.href = '/inicio';
+                })
+                .catch(() => {
+                    window.location.href = '/inicio';
+                });
+        }
     </script>
 
     <!-- Bootstrap JS -->
