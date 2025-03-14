@@ -18,7 +18,6 @@ public class PlantaController {
     @Autowired
     private PlantaService plantaService;
 
-    // Página de gestión de plantas (solo para administradores)
     @GetMapping("/plantasAdmin")
     public String listar(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         if (!esAdministrador(session)) {
@@ -28,12 +27,11 @@ public class PlantaController {
 
         List<Planta> plantas = plantaService.listarTodasOrdenadas();
         model.addAttribute("plantas", plantas);
-        model.addAttribute("planta", new Planta());
+        model.addAttribute("planta", new Planta()); 
 
         return "plantasAdmin";
     }
 
-    // Guardar una nueva planta (solo administradores)
     @PostMapping("/guardarPlanta")
     public String guardar(@ModelAttribute Planta planta, RedirectAttributes redirectAttributes, HttpSession session) {
         if (!esAdministrador(session)) {
@@ -41,30 +39,31 @@ public class PlantaController {
             return "redirect:/inicio";
         }
 
-        // Validación de campos obligatorios
         if (planta.getCodigo().trim().isEmpty() || planta.getNombreComun().trim().isEmpty()
                 || planta.getNombreCientifico().trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Todos los campos son obligatorios.");
             return "redirect:/plantasAdmin";
         }
 
-        // Normalizar código de planta (sin espacios y en mayúsculas)
         String codigoNormalizado = planta.getCodigo().replaceAll("\\s+", "").toUpperCase();
         planta.setCodigo(codigoNormalizado);
 
-        // Validar unicidad del código
         if (planta.getId() == null && plantaService.existeCodigo(codigoNormalizado)) {
             redirectAttributes.addFlashAttribute("errorMessage", "El código ya está en uso.");
             return "redirect:/plantasAdmin";
         }
 
-        // Guardar en la base de datos
         plantaService.guardar(planta);
         redirectAttributes.addFlashAttribute("successMessage", "Planta guardada correctamente.");
         return "redirect:/plantasAdmin";
     }
 
-    // Método auxiliar para verificar si el usuario es administrador
+    @GetMapping("/obtenerPlanta/{id}")
+    @ResponseBody
+    public Optional<Planta> obtenerPlanta(@PathVariable Long id) {
+        return plantaService.obtenerPorId(id);
+    }
+
     private boolean esAdministrador(HttpSession session) {
         String rol = (String) session.getAttribute("rol");
         return rol != null && rol.equals("ADMIN");
