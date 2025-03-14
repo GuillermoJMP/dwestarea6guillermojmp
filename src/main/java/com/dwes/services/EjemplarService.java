@@ -1,6 +1,7 @@
 package com.dwes.services;
 
 import com.dwes.models.Ejemplar;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,9 +11,9 @@ public interface EjemplarService {
     Optional<Ejemplar> obtenerPorId(Long id);
     List<Ejemplar> filtrarPorPlanta(Long plantaId);
     
-    // 🔹 Nuevo método para contar mensajes de un ejemplar
+    // Método para contar mensajes de un ejemplar
     int contarMensajesPorEjemplar(Long ejemplarId);
     
-    // 🔹 Nuevo método para obtener la fecha del último mensaje
-    String obtenerUltimaFechaMensaje(Long ejemplarId);
+    // Método para obtener la fecha del último mensaje (ahora devuelve LocalDateTime)
+    LocalDateTime obtenerUltimaFechaMensaje(Long ejemplarId);
 }
