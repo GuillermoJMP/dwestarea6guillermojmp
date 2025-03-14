@@ -16,59 +16,72 @@ import java.util.List;
 @Controller
 public class PersonaController {
 
-	@Autowired
-	private PersonaService personaService;
+    @Autowired
+    private PersonaService personaService;
 
-	@Autowired
-	private CredencialesService credencialesService;
+    @Autowired
+    private CredencialesService credencialesService;
 
-	@GetMapping("/personaAdmin")
-	public String listar(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
-		// Verifica si el usuario es administrador
-		String rolUsuario = (String) session.getAttribute("rol");
+    @GetMapping("/personaAdmin")
+    public String listar(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        // Verifica si el usuario es administrador
+        String rolUsuario = (String) session.getAttribute("rol");
 
-		if (rolUsuario == null || !rolUsuario.equals("ADMIN")) {
-			redirectAttributes.addFlashAttribute("errorMessage", "No tienes permisos para acceder a esta página.");
-			return "redirect:/inicio";
-		}
+        if (rolUsuario == null || !rolUsuario.equals("ADMIN")) {
+            redirectAttributes.addFlashAttribute("errorMessage", "No tienes permisos para acceder a esta página.");
+            return "redirect:/inicio";
+        }
 
-		List<Persona> personas = personaService.listarTodos();
-		model.addAttribute("personas", personas);
-		return "personaAdmin";
-	}
+        List<Persona> personas = personaService.listarTodos();
+        model.addAttribute("personas", personas);
+        return "personaAdmin";
+    }
 
-	@PostMapping("/guardarPersona")
-	public String guardar(@ModelAttribute Persona persona, RedirectAttributes redirectAttributes, HttpSession session) {
-		// Solo los administradores pueden registrar nuevas personas
-		String rolUsuario = (String) session.getAttribute("rol");
+    @PostMapping("/guardarPersona")
+    public String guardar(@ModelAttribute Persona persona,
+                          RedirectAttributes redirectAttributes,
+                          HttpSession session) {
 
-		if (rolUsuario == null || !rolUsuario.equals("ADMIN")) {
-			redirectAttributes.addFlashAttribute("errorMessage", "No tienes permisos para realizar esta acción.");
-			return "redirect:/inicio";
-		}
+        String rolUsuario = (String) session.getAttribute("rol");
+        if (rolUsuario == null || !rolUsuario.equals("ADMIN")) {
+            redirectAttributes.addFlashAttribute("errorMessage", "No tienes permisos para realizar esta acción.");
+            return "redirect:/inicio";
+        }
 
-		if (persona.getNombre().trim().isEmpty() || persona.getEmail().trim().isEmpty()
-				|| persona.getUsuario().trim().isEmpty() || persona.getPassword().trim().isEmpty()) {
-			redirectAttributes.addFlashAttribute("errorMessage", "Todos los campos son obligatorios.");
-			return "redirect:/personaAdmin";
-		}
+        // Validar campos vacíos
+        if (persona.getNombre().trim().isEmpty() ||
+            persona.getEmail().trim().isEmpty() ||
+            persona.getUsuario().trim().isEmpty() ||
+            persona.getPassword().trim().isEmpty()) {
 
-		if (personaService.existeEmail(persona.getEmail())) {
-			redirectAttributes.addFlashAttribute("errorMessage", "El email ya está en uso.");
-			return "redirect:/personaAdmin";
-		}
+            redirectAttributes.addFlashAttribute("errorMessage", "Todos los campos son obligatorios.");
+            return "redirect:/personaAdmin";
+        }
 
-		if (personaService.existeUsuario(persona.getUsuario())) {
-			redirectAttributes.addFlashAttribute("errorMessage", "El nombre de usuario ya está en uso.");
-			return "redirect:/personaAdmin";
-		}
+        // Validar email y usuario únicos
+        if (personaService.existeEmail(persona.getEmail())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "El email ya está en uso.");
+            return "redirect:/personaAdmin";
+        }
+        if (personaService.existeUsuario(persona.getUsuario())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "El nombre de usuario ya está en uso.");
+            return "redirect:/personaAdmin";
+        }
 
-		personaService.guardar(persona);
+        // Validar contraseña (longitud mínima y sin espacios)
+        if (persona.getPassword().length() < 6 || persona.getPassword().contains(" ")) {
+            redirectAttributes.addFlashAttribute("errorMessage", "La contraseña debe tener al menos 6 caracteres y no contener espacios.");
+            return "redirect:/personaAdmin";
+        }
 
-		Credenciales credenciales = new Credenciales(persona.getUsuario(), persona.getPassword(), "PERSONAL");
-		credencialesService.guardar(credenciales);
+        // Guardar persona en la tabla 'persona'
+        personaService.guardar(persona);
 
-		redirectAttributes.addFlashAttribute("successMessage", "Persona registrada correctamente.");
-		return "redirect:/personaAdmin";
-	}
+        // Guardar credenciales con rol "PERSONAL" por defecto
+        Credenciales credenciales = new Credenciales(persona.getUsuario(), persona.getPassword(), "PERSONAL");
+        credencialesService.guardar(credenciales);
+
+        redirectAttributes.addFlashAttribute("successMessage", "Persona registrada correctamente.");
+        return "redirect:/personaAdmin";
+    }
 }
