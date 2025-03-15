@@ -16,7 +16,7 @@ public class Credenciales {
 	@Column(nullable = false)
 	private String password;
 
-	@Column(nullable = false) // 🔹 Nuevo campo para almacenar el rol
+	@Column(nullable = false)
 	private String rol;
 
 	public Credenciales() {
@@ -31,7 +31,6 @@ public class Credenciales {
 	public Long getId() {
 		return id;
 	}
-
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -39,7 +38,6 @@ public class Credenciales {
 	public String getUsuario() {
 		return usuario;
 	}
-
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
 	}
@@ -47,16 +45,14 @@ public class Credenciales {
 	public String getPassword() {
 		return password;
 	}
-
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
-	public String getRol() { // 🔹 Nuevo getter
+	public String getRol() {
 		return rol;
 	}
-
-	public void setRol(String rol) { // 🔹 Nuevo setter
+	public void setRol(String rol) {
 		this.rol = rol;
 	}
 }

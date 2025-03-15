@@ -28,7 +28,10 @@ public class CredencialesController {
 
     // Autentica al usuario
     @PostMapping("/autenticar")
-    public String autenticar(@RequestParam String usuario, @RequestParam String password, HttpSession session) {
+    public String autenticar(@RequestParam String usuario,
+                             @RequestParam String password,
+                             HttpSession session) {
+
         if (usuario == null || password == null || usuario.trim().isEmpty() || password.trim().isEmpty()) {
             return "redirect:/login?error=camposVacios";
         }
@@ -41,6 +44,8 @@ public class CredencialesController {
 
         session.setAttribute("usuarioLogeado", usuario);
         session.setAttribute("rol", credenciales.getRol());
+        // Si se requiere, también se puede guardar el id del usuario
+        // session.setAttribute("usuarioId", credenciales.getId());
 
         return "redirect:/inicio";
     }

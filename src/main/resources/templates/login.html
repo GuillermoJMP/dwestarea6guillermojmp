@@ -12,7 +12,7 @@
 </head>
 
 <body>
-    <!-- Sidebar -->
+    <!-- Sidebar (opcional, aquí solo se muestra un enlace a Inicio) -->
     <nav class="sidebar" id="sidebar">
         <a th:href="@{/inicio}">🏡 Inicio</a>
     </nav>
@@ -59,6 +59,7 @@
             return true;
         }
 
+        // Opcional: manejo de menú lateral si estuviera presente
         document.getElementById("menuToggle")?.addEventListener("click", function () {
             document.getElementById("sidebar").classList.toggle("show");
             document.getElementById("overlay").classList.toggle("show");
