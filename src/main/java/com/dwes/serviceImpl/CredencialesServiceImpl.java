@@ -25,11 +25,11 @@ public class CredencialesServiceImpl implements CredencialesService {
 	}
 
 	@Override
-	public Credenciales obtenerUsuario(String usuario) { // 🔹 Método para obtener usuario
+	public Credenciales obtenerUsuario(String usuario) {
 		return credencialesRepository.findByUsuario(usuario);
 	}
 
-	// 🔹 Método que se ejecuta al iniciar la aplicación
+	// Se crea el usuario admin automáticamente si no existe
 	@PostConstruct
 	public void crearAdminSiNoExiste() {
 		if (credencialesRepository.findByUsuario("admin") == null) {
