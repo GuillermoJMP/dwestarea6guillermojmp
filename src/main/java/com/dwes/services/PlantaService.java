@@ -9,6 +9,7 @@ public interface PlantaService {
     List<Planta> listarTodasOrdenadas();
     Planta guardar(Planta planta);
     Optional<Planta> obtenerPorId(Long id);
+
     boolean existeCodigo(String codigo);
     boolean existeNombreComun(String nombreComun);
     boolean existeNombreCientifico(String nombreCientifico);

@@ -19,8 +19,7 @@ public class Credenciales {
 	@Column(nullable = false)
 	private String rol;
 
-	public Credenciales() {
-	}
+	public Credenciales() { }
 
 	public Credenciales(String usuario, String password, String rol) {
 		this.usuario = usuario;
@@ -28,31 +27,15 @@ public class Credenciales {
 		this.rol = rol;
 	}
 
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
+	public Long getId() { return id; }
+	public void setId(Long id) { this.id = id; }
 
-	public String getUsuario() {
-		return usuario;
-	}
-	public void setUsuario(String usuario) {
-		this.usuario = usuario;
-	}
+	public String getUsuario() { return usuario; }
+	public void setUsuario(String usuario) { this.usuario = usuario; }
 
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
+	public String getPassword() { return password; }
+	public void setPassword(String password) { this.password = password; }
 
-	public String getRol() {
-		return rol;
-	}
-	public void setRol(String rol) {
-		this.rol = rol;
-	}
+	public String getRol() { return rol; }
+	public void setRol(String rol) { this.rol = rol; }
 }

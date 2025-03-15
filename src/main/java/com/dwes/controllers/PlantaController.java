@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -24,11 +23,9 @@ public class PlantaController {
             redirectAttributes.addFlashAttribute("errorMessage", "Acceso denegado. No tienes permisos.");
             return "redirect:/inicio";
         }
-
         List<Planta> plantas = plantaService.listarTodasOrdenadas();
         model.addAttribute("plantas", plantas);
         model.addAttribute("planta", new Planta());
-
         return "plantasAdmin";
     }
 
@@ -39,44 +36,32 @@ public class PlantaController {
             return "redirect:/inicio";
         }
 
-        // Si es edición, recuperamos la planta de la BD para NO permitir modificar el código (CU4B)
+        // En edición, conservar el código original (no modificable)
         if (planta.getId() != null) {
             Optional<Planta> plantaExistenteOpt = plantaService.obtenerPorId(planta.getId());
             if (plantaExistenteOpt.isEmpty()) {
                 redirectAttributes.addFlashAttribute("errorMessage", "La planta que intentas editar no existe.");
                 return "redirect:/plantasAdmin";
             }
-            // Se conserva el código original de la BD
             planta.setCodigo(plantaExistenteOpt.get().getCodigo());
         } else {
-            // Validación de campos en alta (CU4A)
-            if (planta.getCodigo().trim().isEmpty() || planta.getNombreComun().trim().isEmpty()
-                    || planta.getNombreCientifico().trim().isEmpty()) {
+            // Validación en alta: campos obligatorios
+            if (planta.getCodigo().trim().isEmpty() || planta.getNombreComun().trim().isEmpty() ||
+                planta.getNombreCientifico().trim().isEmpty()) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Todos los campos son obligatorios.");
                 return "redirect:/plantasAdmin";
             }
-
-            // Normalización: quitar espacios, convertir a mayúsculas
+            // Normalizar: quitar espacios y convertir a mayúsculas
             String codigoNormalizado = planta.getCodigo().replaceAll("\\s+", "").toUpperCase();
             planta.setCodigo(codigoNormalizado);
-
-            // Validación de unicidad de código en alta
             if (plantaService.existeCodigo(codigoNormalizado)) {
                 redirectAttributes.addFlashAttribute("errorMessage", "El código ya está en uso.");
                 return "redirect:/plantasAdmin";
             }
         }
-
-        // Guardamos la planta (alta o edición)
         plantaService.guardar(planta);
         redirectAttributes.addFlashAttribute("successMessage", "Planta guardada correctamente.");
         return "redirect:/plantasAdmin";
-    }
-
-    @GetMapping("/obtenerPlanta/{id}")
-    @ResponseBody
-    public Optional<Planta> obtenerPlanta(@PathVariable Long id) {
-        return plantaService.obtenerPorId(id);
     }
 
     private boolean esAdministrador(HttpSession session) {

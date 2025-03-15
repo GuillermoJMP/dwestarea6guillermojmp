@@ -4,36 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Viveros Acme - Gestión de Plantas</title>
-
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="plantasAdmin.css">
 </head>
-
 <body data-page="plantas">
     <!-- Navbar -->
     <nav class="navbar navbar-dark fixed-top">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <button class="btn btn-outline-light" id="menuToggle">☰ Menú</button>
             <a class="navbar-brand mx-auto" href="#">Viveros Acme</a>
-
-            <!-- Usuario -->
             <div class="dropdown" th:if="${rol != 'INVITADO'}">
-                <img src="user.png" alt="Usuario" class="user-img dropdown-toggle" id="userMenuToggle"
-                     data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="user.png" alt="Usuario" class="user-img dropdown-toggle" id="userMenuToggle" data-bs-toggle="dropdown" aria-expanded="false">
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuToggle">
                     <li><a class="dropdown-item" href="#" onclick="logoutAndRedirect()">Cerrar Sesión</a></li>
                 </ul>
             </div>
-
-            <!-- Botón de "Iniciar Sesión" solo para invitados -->
             <div th:if="${rol == 'INVITADO'}">
                 <a class="btn btn-light" th:href="@{/login}">Iniciar Sesión</a>
             </div>
         </div>
     </nav>
-
     <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
         <a th:href="@{/inicio}">🏡 Inicio</a>
@@ -42,70 +34,42 @@
         <a th:href="@{/mensajesAdmin}">📩 Gestión de Mensajes</a>
         <a th:href="@{/personaAdmin}">👥 Gestión de Personas</a>
     </nav>
-
     <div class="overlay" id="overlay"></div>
-
     <!-- Contenido Principal -->
     <main class="container mt-5 main-content">
         <h2 class="text-center">Gestión de Plantas</h2>
-
-        <!-- Mensajes de Éxito o Error -->
         <div th:if="${successMessage}" class="alert alert-success text-center fade-message">
             <span th:text="${successMessage}"></span>
         </div>
         <div th:if="${errorMessage}" class="alert alert-danger text-center fade-message">
             <span th:text="${errorMessage}"></span>
         </div>
-
         <div class="row">
-            <!-- Formulario de Registro / Edición -->
+            <!-- Formulario de Registro/Edición -->
             <div class="col-md-6 mb-4">
                 <h5 id="tituloFormulario" th:text="${planta.id != null ? 'Editar Planta' : 'Añadir Planta'}"></h5>
                 <div class="form-container">
                     <form th:action="@{/guardarPlanta}" method="post" id="plantaForm">
-                        <!-- ID oculto -->
                         <input type="hidden" th:field="${planta.id}" id="plantaId">
-
-                        <!-- Código: editable solo en alta; en edición se muestra como readonly -->
                         <div class="mb-3">
                             <label for="codigo" class="form-label">Código</label>
-                            <input type="text" class="form-control" id="codigo" name="codigo"
-                                   th:field="${planta.codigo}"
-                                   required
-                                   pattern="[A-Za-z]+"
-                                   title="Solo letras, sin espacios"
-                                   th:attr="readonly=${planta.id != null}" />
+                            <input type="text" class="form-control" id="codigo" name="codigo" th:field="${planta.codigo}" required pattern="[A-Za-z]+" title="Solo letras, sin espacios" th:attr="readonly=${planta.id != null}" />
                         </div>
-
                         <div class="mb-3">
                             <label for="commonName" class="form-label">Nombre Común</label>
-                            <input type="text" class="form-control" id="commonName" name="nombreComun"
-                                   th:field="${planta.nombreComun}"
-                                   required
-                                   pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+"
-                                   title="Solo letras y espacios, sin números ni caracteres especiales" />
+                            <input type="text" class="form-control" id="commonName" name="nombreComun" th:field="${planta.nombreComun}" required pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]+" title="Solo letras y espacios" />
                         </div>
                         <div class="mb-3">
                             <label for="scientificName" class="form-label">Nombre Científico</label>
-                            <input type="text" class="form-control" id="scientificName" name="nombreCientifico"
-                                   th:field="${planta.nombreCientifico}"
-                                   required
-                                   pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+"
-                                   title="Solo letras y espacios, sin números ni caracteres especiales" />
+                            <input type="text" class="form-control" id="scientificName" name="nombreCientifico" th:field="${planta.nombreCientifico}" required pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ\\s]+" title="Solo letras y espacios" />
                         </div>
-
                         <button type="submit" class="btn btn-primary w-100" id="submitBtn">
                             <span th:text="${planta.id == null ? 'Añadir Planta' : 'Guardar Cambios'}"></span>
                         </button>
-
-                        <!-- Botón para resetear el formulario y volver a modo alta -->
-                        <button type="button" class="btn btn-secondary w-100 mt-2" onclick="limpiarFormulario()">
-                            Nueva Planta
-                        </button>
+                        <button type="button" class="btn btn-secondary w-100 mt-2" onclick="limpiarFormulario()">Nueva Planta</button>
                     </form>
                 </div>
             </div>
-
             <!-- Listado de Plantas -->
             <div class="col-md-6 mb-4">
                 <h5>Listado de Plantas</h5>
@@ -128,13 +92,7 @@
                                     <td th:text="${planta.nombreComun}"></td>
                                     <td th:text="${planta.nombreCientifico}"></td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-warning edit-btn"
-                                                th:data-id="${planta.id}"
-                                                th:data-codigo="${planta.codigo}"
-                                                th:data-nombre-comun="${planta.nombreComun}"
-                                                th:data-nombre-cientifico="${planta.nombreCientifico}">
-                                            Editar
-                                        </button>
+                                        <button type="button" class="btn btn-sm btn-warning edit-btn" th:data-id="${planta.id}" th:data-codigo="${planta.codigo}" th:data-nombre-comun="${planta.nombreComun}" th:data-nombre-cientifico="${planta.nombreCientifico}">Editar</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -144,35 +102,27 @@
             </div>
         </div>
     </main>
-
     <!-- JavaScript -->
     <script>
-        // Menú lateral
         document.getElementById("menuToggle").addEventListener("click", function () {
             document.getElementById("sidebar").classList.toggle("show");
             document.getElementById("overlay").classList.toggle("show");
         });
-
         document.getElementById("overlay").addEventListener("click", function () {
             document.getElementById("sidebar").classList.remove("show");
             document.getElementById("overlay").classList.remove("show");
         });
-
-        // Botón Editar: carga datos en el formulario y establece el campo "Código" como solo lectura
         document.querySelectorAll(".edit-btn").forEach(button => {
             button.addEventListener("click", function() {
                 document.getElementById("plantaId").value = this.getAttribute("data-id");
                 document.getElementById("codigo").value = this.getAttribute("data-codigo");
                 document.getElementById("commonName").value = this.getAttribute("data-nombre-comun");
                 document.getElementById("scientificName").value = this.getAttribute("data-nombre-cientifico");
-
                 document.getElementById("tituloFormulario").innerText = "Editar Planta";
                 document.querySelector("#submitBtn span").innerText = "Guardar Cambios";
                 document.getElementById("codigo").readOnly = true;
             });
         });
-
-        // Botón "Nueva Planta": resetea el formulario a modo alta
         function limpiarFormulario() {
             document.getElementById("plantaId").value = "";
             document.getElementById("codigo").value = "";
@@ -182,20 +132,12 @@
             document.querySelector("#submitBtn span").innerText = "Añadir Planta";
             document.getElementById("codigo").readOnly = false;
         }
-
-        // Función para cerrar sesión
         function logoutAndRedirect() {
             fetch('/logout', { method: 'GET' })
-                .then(() => {
-                    sessionStorage.clear();
-                    window.location.href = '/inicio';
-                })
-                .catch(() => {
-                    window.location.href = '/inicio';
-                });
+                .then(() => { sessionStorage.clear(); window.location.href = '/inicio'; })
+                .catch(() => { window.location.href = '/inicio'; });
         }
     </script>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -10,10 +10,6 @@ public interface EjemplarService {
     Ejemplar guardar(Ejemplar ejemplar);
     Optional<Ejemplar> obtenerPorId(Long id);
     List<Ejemplar> filtrarPorPlanta(Long plantaId);
-    
-    // Método para contar mensajes de un ejemplar
     int contarMensajesPorEjemplar(Long ejemplarId);
-    
-    // Método para obtener la fecha del último mensaje (ahora devuelve LocalDateTime)
     LocalDateTime obtenerUltimaFechaMensaje(Long ejemplarId);
 }

@@ -29,7 +29,6 @@ public class CredencialesServiceImpl implements CredencialesService {
 		return credencialesRepository.findByUsuario(usuario);
 	}
 
-	// Se crea el usuario admin automáticamente si no existe
 	@PostConstruct
 	public void crearAdminSiNoExiste() {
 		if (credencialesRepository.findByUsuario("admin") == null) {

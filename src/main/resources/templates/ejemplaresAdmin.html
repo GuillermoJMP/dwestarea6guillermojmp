@@ -4,35 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Viveros Acme - Gestión de Ejemplares</title>
-
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="ejemplaresAdmin.css">
 </head>
-
 <body data-page="ejemplares">
     <!-- Navbar -->
     <nav class="navbar navbar-dark fixed-top">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <button class="btn btn-outline-light" id="menuToggle">☰ Menú</button>
             <a class="navbar-brand mx-auto" href="#">Viveros Acme</a>
-
-            <!-- Usuario -->
             <div class="dropdown" th:if="${rol != 'INVITADO'}">
                 <img src="user.png" alt="Usuario" class="user-img dropdown-toggle" id="userMenuToggle" data-bs-toggle="dropdown" aria-expanded="false">
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuToggle">
                     <li><a class="dropdown-item" href="#" onclick="logoutAndRedirect()">Cerrar Sesión</a></li>
                 </ul>
             </div>
-
-            <!-- Botón de "Iniciar Sesión" solo para invitados -->
             <div th:if="${rol == 'INVITADO'}">
                 <a class="btn btn-light" th:href="@{/login}">Iniciar Sesión</a>
             </div>
         </div>
     </nav>
-
     <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
         <a th:href="@{/inicio}">🏡 Inicio</a>
@@ -41,41 +34,31 @@
         <a th:href="@{/mensajesAdmin}">📩 Gestión de Mensajes</a>
         <a th:href="@{/personaAdmin}">👥 Gestión de Personas</a>
     </nav>
-
     <div class="overlay" id="overlay"></div>
-
     <!-- Contenido Principal -->
     <main class="container mt-5 main-content">
         <h2 class="text-center">Gestión de Ejemplares</h2>
-
-        <!-- Mensajes de Éxito o Error -->
         <div th:if="${successMessage}" class="alert alert-success text-center">
             <span th:text="${successMessage}"></span>
         </div>
         <div th:if="${errorMessage}" class="alert alert-danger text-center">
             <span th:text="${errorMessage}"></span>
         </div>
-
         <div class="row">
-            <!-- Filtro de Ejemplares por Tipo de Planta -->
+            <!-- Filtro por planta -->
             <div class="col-md-6">
                 <h5>Filtrar Ejemplares</h5>
                 <form method="get" action="/ejemplaresAdmin">
                     <div class="input-group mb-3">
                         <select name="plantaId" class="form-select" onchange="this.form.submit()">
                             <option value="">Mostrar Todos</option>
-                            <option th:each="planta : ${plantas}" 
-                                    th:value="${planta.id}" 
-                                    th:text="${planta.nombreComun}" 
-                                    th:selected="${planta.id == plantaSeleccionada}">
-                            </option>
+                            <option th:each="planta : ${plantas}" th:value="${planta.id}" th:text="${planta.nombreComun}" th:selected="${planta.id == plantaSeleccionada}"></option>
                         </select>
                     </div>
                 </form>
             </div>
-
-            <!-- Registro de Ejemplar (Solo para Admin y Personal) -->
-            <div class="col-md-6" th:if="${rol == 'ADMIN' || rol == 'PERSONAL'}">
+            <!-- Registro de ejemplar (solo para ADMIN y PERSONAL) -->
+            <div class="col-md-6" th:if="${rol == 'ADMIN' or rol == 'PERSONAL'}">
                 <h5>Registrar Nuevo Ejemplar</h5>
                 <form th:action="@{/guardarEjemplar}" method="post">
                     <div class="mb-3">
@@ -89,8 +72,7 @@
                 </form>
             </div>
         </div>
-
-        <!-- Tabla de Ejemplares -->
+        <!-- Listado de Ejemplares -->
         <div class="mt-4">
             <h5>Listado de Ejemplares</h5>
             <div class="table-responsive">
@@ -108,7 +90,7 @@
                     <tbody>
                         <tr th:each="ejemplar : ${ejemplares}">
                             <td th:text="${ejemplar.id}"></td>
-                            <td th:text="${ejemplar.planta.codigo + '_' + ejemplar.id}"></td>
+                            <td th:text="${ejemplar.nombre}"></td>
                             <td th:text="${ejemplar.planta.nombreComun}"></td>
                             <td th:text="${ejemplar.numeroMensajes}"></td>
                             <td th:text="${#temporals.format(ejemplar.ultimoMensaje, 'dd/MM/yyyy HH:mm')}"></td>
@@ -121,33 +103,22 @@
             </div>
         </div>
     </main>
-
     <!-- JavaScript -->
     <script>
         document.getElementById("menuToggle").addEventListener("click", function() {
             document.getElementById("sidebar").classList.toggle("show");
             document.getElementById("overlay").classList.toggle("show");
         });
-
         document.getElementById("overlay").addEventListener("click", function() {
             document.getElementById("sidebar").classList.remove("show");
             document.getElementById("overlay").classList.remove("show");
         });
+        function logoutAndRedirect() {
+            fetch('/logout', { method: 'GET' })
+                .then(() => { sessionStorage.clear(); window.location.href = '/inicio'; })
+                .catch(() => { window.location.href = '/inicio'; });
+        }
     </script>
-    
-    <script>
-    function logoutAndRedirect() {
-        fetch('/logout', { method: 'GET' }) 
-            .then(() => {
-                sessionStorage.clear(); 
-                window.location.href = '/inicio'; 
-            })
-            .catch(() => {
-                window.location.href = '/inicio'; 
-            });
-    }
-    </script>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -8,7 +8,6 @@ import com.dwes.services.EjemplarService;
 import com.dwes.services.MensajeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -18,12 +17,10 @@ public class EjemplarServiceImpl implements EjemplarService {
 
     @Autowired
     private EjemplarRepository ejemplarRepository;
-    
-    // Inyectamos el servicio de mensajes (para contar mensajes)
+
     @Autowired
     private MensajeService mensajeService;
-    
-    // Inyectamos el repositorio de mensajes para obtener la última fecha
+
     @Autowired
     private MensajeRepository mensajeRepository;
 

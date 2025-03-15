@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
-
     @Query("SELECT m FROM Mensaje m WHERE m.persona.id = :personaId")
     List<Mensaje> findByPersonaId(Long personaId);
 
@@ -23,4 +22,3 @@ public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
 
     Optional<Mensaje> findTopByEjemplarIdOrderByFechaHoraDesc(Long ejemplarId);
 }
-
