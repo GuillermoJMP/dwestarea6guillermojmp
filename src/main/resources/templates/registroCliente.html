@@ -28,47 +28,51 @@
 			id="mensajeError">
 			<span th:text="${errorMessage}"></span>
 		</div>
-		<form th:action="@{/guardarCliente}" method="post"
-			id="registroClienteForm">
-			<div class="mb-3">
-				<label class="form-label">Nombre Completo</label> <input type="text"
-					class="form-control" name="nombre" required>
-			</div>
-			<div class="mb-3">
-				<label class="form-label">Fecha de Nacimiento</label> <input
-					type="date" class="form-control" name="fechaNacimiento" required>
-			</div>
-			<div class="mb-3">
-				<label class="form-label">NIF/NIE</label> <input type="text"
-					class="form-control" name="nifNie" required>
-			</div>
-			<div class="mb-3">
-				<label class="form-label">Dirección de Envío</label> <input
-					type="text" class="form-control" name="direccionEnvio" required>
-			</div>
-			<div class="mb-3">
-				<label class="form-label">Teléfono</label> <input type="text"
-					class="form-control" name="telefono" required>
-			</div>
-			<div class="mb-3">
-				<label class="form-label">Correo Electrónico</label> <input
-					type="email" class="form-control" name="email" required>
-			</div>
-			<div class="mb-3">
-				<label class="form-label">Nombre de Usuario</label> <input
-					type="text" class="form-control" name="usuario" required
-					pattern="^[a-zA-Z0-9]+$"
-					title="Solo letras y números, sin espacios.">
-			</div>
-			<div class="mb-3">
-				<label class="form-label">Contraseña</label> <input type="password"
-					class="form-control" name="password" required minlength="6"
-					pattern="^\S+$"
-					title="No puede contener espacios y debe tener al menos 6 caracteres.">
-			</div>
-			<button type="submit" class="btn btn-primary w-100">Registrar
-				Cliente</button>
-		</form>
+		<div class="form-container">
+			<form th:action="@{/guardarCliente}" method="post"
+				id="registroClienteForm">
+				<div class="mb-3">
+					<label class="form-label">Nombre Completo</label> <input
+						type="text" class="form-control" name="nombre" required>
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Fecha de Nacimiento</label> <input
+						type="date" class="form-control" name="fechaNacimiento" required>
+				</div>
+				<div class="mb-3">
+					<label class="form-label">NIF/NIE</label> <input type="text"
+						class="form-control" name="nifNie" required
+						pattern="^[0-9]{8}[A-Z]$"
+						title="Debe ser 8 dígitos seguidos de una letra mayúscula.">
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Dirección de Envío</label> <input
+						type="text" class="form-control" name="direccionEnvio" required>
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Teléfono</label> <input type="text"
+						class="form-control" name="telefono" required>
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Correo Electrónico</label> <input
+						type="email" class="form-control" name="email" required>
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Nombre de Usuario</label> <input
+						type="text" class="form-control" name="usuario" required
+						pattern="^[a-zA-Z0-9]+$"
+						title="Solo letras y números, sin espacios.">
+				</div>
+				<div class="mb-3">
+					<label class="form-label">Contraseña</label> <input type="password"
+						class="form-control" name="password" required minlength="6"
+						pattern="^\S+$"
+						title="No puede contener espacios y debe tener al menos 6 caracteres.">
+				</div>
+				<button type="submit" class="btn btn-primary w-100">Registrar
+					Cliente</button>
+			</form>
+		</div>
 	</div>
 	<script>
 		setTimeout(function() {

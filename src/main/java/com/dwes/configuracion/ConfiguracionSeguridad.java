@@ -12,21 +12,18 @@ public class ConfiguracionSeguridad {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests(authorize -> authorize
-				// Rutas públicas para invitados
-				.requestMatchers("/inicio", "/verPlantas", "/registroCliente", "/guardarCliente", "/login",
-						"/autenticar")
-				.permitAll()
-				// Rutas para administración (ADMIN)
-				.requestMatchers("/plantasAdmin", "/personaAdmin").hasRole("ADMIN")
-				// Rutas para gestión de ejemplares, mensajes y stock (ADMIN y PERSONAL)
-				.requestMatchers("/ejemplaresAdmin", "/mensajesAdmin", "/stockAdmin").hasAnyRole("ADMIN", "PERSONAL")
-				// Rutas para clientes
-				.requestMatchers("/zonaCliente", "/pedidoCliente", "/carrito", "/confirmarPedido", "/misPedidos")
-				.hasRole("CLIENTE").anyRequest().authenticated()).formLogin(form -> form.loginPage("/login")
-						// Redirigir según rol: se hace en el controlador de autenticación
-						// (CredencialesController)
-						.defaultSuccessUrl("/inicio", true).permitAll())
+		http.csrf().disable() // Deshabilitar CSRF para pruebas; en producción, habilítalo y configúralo
+								// correctamente.
+				.authorizeHttpRequests(authorize -> authorize
+						.requestMatchers("/inicio", "/verPlantas", "/registroCliente", "/guardarCliente", "/login",
+								"/autenticar")
+						.permitAll().requestMatchers("/plantasAdmin", "/personaAdmin").hasRole("ADMIN")
+						.requestMatchers("/ejemplaresAdmin", "/mensajesAdmin", "/stockAdmin")
+						.hasAnyRole("ADMIN", "PERSONAL")
+						.requestMatchers("/zonaCliente", "/pedidoCliente", "/carrito", "/confirmarPedido",
+								"/misPedidos")
+						.hasRole("CLIENTE").anyRequest().authenticated())
+				.formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/inicio", true).permitAll())
 				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/inicio").permitAll())
 				.sessionManagement(session -> session.maximumSessions(1));
 		return http.build();

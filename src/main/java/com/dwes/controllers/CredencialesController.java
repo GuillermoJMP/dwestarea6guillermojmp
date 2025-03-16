@@ -6,6 +6,9 @@ import com.dwes.services.CredencialesService;
 import com.dwes.services.PersonaService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +29,7 @@ public class CredencialesController {
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
 		session.invalidate();
+		SecurityContextHolder.clearContext();
 		return "redirect:/inicio";
 	}
 
@@ -38,14 +42,21 @@ public class CredencialesController {
 		if (credenciales == null || !credenciales.getPassword().equals(password)) {
 			return "redirect:/login?error=credencialesInvalidas";
 		}
+		// Establecer autenticación en SecurityContext
+		String rol = credenciales.getRol();
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(usuario, password,
+				AuthorityUtils.createAuthorityList("ROLE_" + rol));
+		SecurityContextHolder.getContext().setAuthentication(auth);
+
 		session.setAttribute("usuarioLogeado", usuario);
-		session.setAttribute("rol", credenciales.getRol());
-		// Asumimos que PersonaService tiene el método obtenerPorUsuario
+		session.setAttribute("rol", rol);
 		Persona persona = personaService.obtenerPorUsuario(usuario);
 		session.setAttribute("usuarioId", persona.getId());
-		if (credenciales.getRol().equals("CLIENTE")) {
+
+		if ("CLIENTE".equals(rol)) {
 			return "redirect:/zonaCliente";
 		}
 		return "redirect:/inicio";
 	}
+
 }
