@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Viveros Acme - Gestión de Mensajes</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="mensajesAdmin.css">
@@ -15,13 +14,13 @@
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <button class="btn btn-outline-light" id="menuToggle">☰ Menú</button>
             <a class="navbar-brand mx-auto" href="#">Viveros Acme</a>
-            <div class="dropdown" th:if="${rol != 'INVITADO'}">
+            <div class="dropdown" th:if="${session.rol != 'INVITADO'}">
                 <img src="user.png" alt="Usuario" class="user-img dropdown-toggle" id="userMenuToggle" data-bs-toggle="dropdown" aria-expanded="false">
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuToggle">
                     <li><a class="dropdown-item" href="#" onclick="logoutAndRedirect()">Cerrar Sesión</a></li>
                 </ul>
             </div>
-            <div th:if="${rol == 'INVITADO'}">
+            <div th:if="${session.rol == 'INVITADO'}">
                 <a class="btn btn-light" th:href="@{/login}">Iniciar Sesión</a>
             </div>
         </div>
@@ -29,10 +28,10 @@
     <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
         <a th:href="@{/inicio}">🏡 Inicio</a>
-        <a th:href="@{/plantasAdmin}">🌱 Gestión de Plantas</a>
-        <a th:href="@{/ejemplaresAdmin}">🌿 Gestión de Ejemplares</a>
-        <a th:href="@{/mensajesAdmin}">📩 Gestión de Mensajes</a>
-        <a th:href="@{/personaAdmin}">👥 Gestión de Personas</a>
+        <a th:href="@{/plantasAdmin}" th:if="${session.rol == 'ADMIN'}">🌱 Gestión de Plantas</a>
+        <a th:href="@{/ejemplaresAdmin}" th:if="${session.rol == 'ADMIN' or session.rol == 'PERSONAL'}">🌿 Gestión de Ejemplares</a>
+        <a th:href="@{/mensajesAdmin}" th:if="${session.rol == 'ADMIN' or session.rol == 'PERSONAL'}">📩 Gestión de Mensajes</a>
+        <a th:href="@{/personaAdmin}" th:if="${session.rol == 'ADMIN'}">👥 Gestión de Personas</a>
     </nav>
     <div class="overlay" id="overlay"></div>
     <main class="container mt-5 main-content">
@@ -46,7 +45,44 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
         <div class="row">
-            <!-- Formulario de Registro de Mensajes -->
+            <!-- Filtros: por Tipo de Planta, Ejemplar y Usuario -->
+            <div class="col-md-4">
+                <h5>Filtrar por Tipo de Planta</h5>
+                <form method="get" action="/mensajesAdmin">
+                    <div class="input-group mb-3">
+                        <select name="plantaFiltro" class="form-select" onchange="this.form.submit()">
+                            <option value="">Mostrar Todos</option>
+                            <option th:each="planta : ${plantas}" th:value="${planta.id}" th:text="${planta.nombreComun}" th:selected="${planta.id == plantaFiltro}"></option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-4">
+                <h5>Filtrar por Ejemplar</h5>
+                <form method="get" action="/mensajesAdmin">
+                    <div class="input-group mb-3">
+                        <select name="ejemplarId" class="form-select" onchange="this.form.submit()">
+                            <option value="">Mostrar Todos</option>
+                            <option th:each="ejemplar : ${ejemplares}" th:value="${ejemplar.id}" th:text="${ejemplar.nombre}" th:selected="${ejemplar.id == ejemplarId}"></option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-4">
+                <h5>Filtrar por Usuario</h5>
+                <form method="get" action="/mensajesAdmin">
+                    <div class="input-group mb-3">
+                        <select name="personaId" class="form-select" onchange="this.form.submit()">
+                            <option value="">Mostrar Todos</option>
+                            <option th:each="persona : ${personas}" th:value="${persona.id}" th:text="${persona.nombre}" th:selected="${persona.id == personaId}"></option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <!-- También se puede incluir filtro por fecha, similar a lo que ya implementaste -->
+        </div>
+        <!-- Formulario de Registro de Mensajes -->
+        <div class="row">
             <div class="col-md-6">
                 <h5>Añadir Mensaje</h5>
                 <form th:action="@{/guardarMensaje}" method="post" id="mensajeForm">
@@ -134,7 +170,6 @@
                 .catch(() => { window.location.href = '/inicio'; });
         }
     </script>
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

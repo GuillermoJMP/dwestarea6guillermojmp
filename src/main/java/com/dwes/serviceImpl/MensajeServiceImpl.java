@@ -47,4 +47,9 @@ public class MensajeServiceImpl implements MensajeService {
     public List<Mensaje> obtenerMensajesPorEjemplarOrdenados(Long ejemplarId) {
         return mensajeRepository.findByEjemplarIdOrderByFechaHoraAsc(ejemplarId);
     }
+
+    @Override
+    public List<Mensaje> buscarPorPlanta(Long plantaId) {
+        return mensajeRepository.findByPlantaId(plantaId);
+    }
 }

@@ -21,4 +21,8 @@ public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
     List<Mensaje> findByEjemplarIdOrderByFechaHoraAsc(Long ejemplarId);
 
     Optional<Mensaje> findTopByEjemplarIdOrderByFechaHoraDesc(Long ejemplarId);
+
+    // Nuevo método para filtrar por tipo de planta (id de la planta)
+    @Query("SELECT m FROM Mensaje m WHERE m.ejemplar.planta.id = :plantaId")
+    List<Mensaje> findByPlantaId(Long plantaId);
 }

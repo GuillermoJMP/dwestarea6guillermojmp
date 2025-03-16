@@ -6,6 +6,7 @@ import com.dwes.models.Ejemplar;
 import com.dwes.services.MensajeService;
 import com.dwes.services.PersonaService;
 import com.dwes.services.EjemplarService;
+import com.dwes.services.PlantaService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -28,12 +29,16 @@ public class MensajeController {
 
     @Autowired
     private EjemplarService ejemplarService;
+    
+    @Autowired
+    private PlantaService plantaService; // Para el filtro por planta
 
     @GetMapping("/mensajesAdmin")
     public String listar(@RequestParam(required = false) Long ejemplarId,
                          @RequestParam(required = false) Long personaId,
                          @RequestParam(required = false) String inicio,
                          @RequestParam(required = false) String fin,
+                         @RequestParam(required = false) Long plantaFiltro,
                          Model model,
                          HttpSession session,
                          RedirectAttributes redirectAttributes) {
@@ -45,7 +50,9 @@ public class MensajeController {
         }
         List<Mensaje> mensajes;
         try {
-            if (ejemplarId != null) {
+            if (plantaFiltro != null) {
+                mensajes = mensajeService.buscarPorPlanta(plantaFiltro);
+            } else if (ejemplarId != null) {
                 mensajes = mensajeService.buscarPorEjemplar(ejemplarId);
             } else if (personaId != null) {
                 mensajes = mensajeService.buscarPorPersona(personaId);
@@ -63,6 +70,8 @@ public class MensajeController {
         model.addAttribute("mensajes", mensajes);
         model.addAttribute("ejemplares", ejemplarService.listarTodos());
         model.addAttribute("personas", personaService.listarTodos());
+        model.addAttribute("plantas", plantaService.listarTodas());
+        model.addAttribute("plantaFiltro", plantaFiltro);
         return "mensajesAdmin";
     }
 

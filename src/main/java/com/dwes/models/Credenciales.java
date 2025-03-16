@@ -5,21 +5,18 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "credenciales")
 public class Credenciales {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
 	@Column(nullable = false, unique = true)
 	private String usuario;
-
 	@Column(nullable = false)
 	private String password;
-
 	@Column(nullable = false)
 	private String rol;
 
-	public Credenciales() { }
+	public Credenciales() {
+	}
 
 	public Credenciales(String usuario, String password, String rol) {
 		this.usuario = usuario;
@@ -27,15 +24,35 @@ public class Credenciales {
 		this.rol = rol;
 	}
 
-	public Long getId() { return id; }
-	public void setId(Long id) { this.id = id; }
+	public Long getId() {
+		return id;
+	}
 
-	public String getUsuario() { return usuario; }
-	public void setUsuario(String usuario) { this.usuario = usuario; }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-	public String getPassword() { return password; }
-	public void setPassword(String password) { this.password = password; }
+	public String getUsuario() {
+		return usuario;
+	}
 
-	public String getRol() { return rol; }
-	public void setRol(String rol) { this.rol = rol; }
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getRol() {
+		return rol;
+	}
+
+	public void setRol(String rol) {
+		this.rol = rol;
+	}
 }
