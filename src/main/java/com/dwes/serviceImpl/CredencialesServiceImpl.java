@@ -3,11 +3,11 @@ package com.dwes.serviceImpl;
 import com.dwes.models.Credenciales;
 import com.dwes.models.Persona;
 import com.dwes.repositories.CredencialesRepository;
+import com.dwes.repositories.PersonaRepository;
 import com.dwes.services.CredencialesService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.dwes.repositories.PersonaRepository;
 
 @Service
 public class CredencialesServiceImpl implements CredencialesService {
@@ -48,5 +48,4 @@ public class CredencialesServiceImpl implements CredencialesService {
 			personaRepository.save(adminPersona);
 		}
 	}
-
 }

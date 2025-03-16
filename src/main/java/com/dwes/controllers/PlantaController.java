@@ -35,7 +35,7 @@ public class PlantaController {
 			redirectAttributes.addFlashAttribute("errorMessage", "Acceso denegado. No tienes permisos.");
 			return "redirect:/inicio";
 		}
-		if (planta.getId() != null) { // Modificación: conservar código
+		if (planta.getId() != null) { // Modificar: conservar código
 			Optional<Planta> plantaExistenteOpt = plantaService.obtenerPorId(planta.getId());
 			if (plantaExistenteOpt.isEmpty()) {
 				redirectAttributes.addFlashAttribute("errorMessage", "La planta que intentas editar no existe.");
@@ -48,7 +48,6 @@ public class PlantaController {
 				redirectAttributes.addFlashAttribute("errorMessage", "Todos los campos son obligatorios.");
 				return "redirect:/plantasAdmin";
 			}
-			// Cambiado el patrón para permitir espacios: se utiliza espacio literal
 			String codigoNormalizado = planta.getCodigo().replaceAll("\\s+", "").toUpperCase();
 			planta.setCodigo(codigoNormalizado);
 			if (plantaService.existeCodigo(codigoNormalizado)) {

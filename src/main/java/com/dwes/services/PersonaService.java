@@ -15,6 +15,6 @@ public interface PersonaService {
 	boolean existeEmail(String email);
 
 	boolean existeUsuario(String usuario);
-	
+
 	Persona obtenerPorUsuario(String usuario);
 }

@@ -1,9 +1,9 @@
 package com.dwes.controllers;
 
 import com.dwes.models.Credenciales;
-import com.dwes.serviceImpl.CredencialesServiceImpl;
-import com.dwes.services.PersonaService;
 import com.dwes.models.Persona;
+import com.dwes.services.CredencialesService;
+import com.dwes.services.PersonaService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class CredencialesController {
 
 	@Autowired
-	private CredencialesServiceImpl credencialesService;
+	private CredencialesService credencialesService;
 
 	@Autowired
 	private PersonaService personaService;
@@ -40,8 +40,12 @@ public class CredencialesController {
 		}
 		session.setAttribute("usuarioLogeado", usuario);
 		session.setAttribute("rol", credenciales.getRol());
+		// Asumimos que PersonaService tiene el método obtenerPorUsuario
 		Persona persona = personaService.obtenerPorUsuario(usuario);
 		session.setAttribute("usuarioId", persona.getId());
+		if (credenciales.getRol().equals("CLIENTE")) {
+			return "redirect:/zonaCliente";
+		}
 		return "redirect:/inicio";
 	}
 }
