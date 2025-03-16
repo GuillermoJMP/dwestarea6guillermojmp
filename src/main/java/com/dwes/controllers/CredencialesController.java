@@ -2,6 +2,8 @@ package com.dwes.controllers;
 
 import com.dwes.models.Credenciales;
 import com.dwes.serviceImpl.CredencialesServiceImpl;
+import com.dwes.services.PersonaService;
+import com.dwes.models.Persona;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +14,9 @@ public class CredencialesController {
 
 	@Autowired
 	private CredencialesServiceImpl credencialesService;
+
+	@Autowired
+	private PersonaService personaService;
 
 	@GetMapping("/login")
 	public String mostrarLogin() {
@@ -35,6 +40,8 @@ public class CredencialesController {
 		}
 		session.setAttribute("usuarioLogeado", usuario);
 		session.setAttribute("rol", credenciales.getRol());
+		Persona persona = personaService.obtenerPorUsuario(usuario);
+		session.setAttribute("usuarioId", persona.getId());
 		return "redirect:/inicio";
 	}
 }

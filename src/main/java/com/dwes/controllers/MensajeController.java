@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 public class MensajeController {
@@ -63,8 +64,11 @@ public class MensajeController {
 			redirectAttributes.addFlashAttribute("errorMessage", "Error al filtrar mensajes.");
 			return "redirect:/mensajesAdmin";
 		}
+
+		List<Ejemplar> ejemplaresConMensajes = ejemplarService.listarTodos().stream()
+				.filter(e -> mensajeService.buscarPorEjemplar(e.getId()).size() > 0).collect(Collectors.toList());
 		model.addAttribute("mensajes", mensajes);
-		model.addAttribute("ejemplares", ejemplarService.listarTodos());
+		model.addAttribute("ejemplares", ejemplaresConMensajes);
 		model.addAttribute("personas", personaService.listarTodos());
 		model.addAttribute("plantas", plantaService.listarTodas());
 		model.addAttribute("plantaFiltro", plantaFiltro);
@@ -84,6 +88,7 @@ public class MensajeController {
 			redirectAttributes.addFlashAttribute("errorMessage", "El mensaje no puede estar vacío.");
 			return "redirect:/mensajesAdmin";
 		}
+		// Tomar el usuario logueado
 		Persona persona = personaService.obtenerPorId((Long) session.getAttribute("usuarioId"));
 		Optional<Ejemplar> ejemplarOptional = ejemplarService.obtenerPorId(ejemplarId);
 		Ejemplar ejemplar = ejemplarOptional.orElse(null);
