@@ -9,14 +9,19 @@ public class Ejemplar {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	private String nombre;
+
 	@ManyToOne
 	@JoinColumn(name = "idPlanta")
 	private Planta planta;
+
 	@OneToMany(mappedBy = "ejemplar", cascade = CascadeType.ALL)
 	private List<Mensaje> mensajes;
+
 	@Transient
 	private int numeroMensajes;
+
 	@Transient
 	private LocalDateTime ultimoMensaje;
 
@@ -67,5 +72,15 @@ public class Ejemplar {
 
 	public void setUltimoMensaje(LocalDateTime ultimoMensaje) {
 		this.ultimoMensaje = ultimoMensaje;
+	}
+
+	private boolean vendido = false;
+
+	public boolean isVendido() {
+		return vendido;
+	}
+
+	public void setVendido(boolean vendido) {
+		this.vendido = vendido;
 	}
 }

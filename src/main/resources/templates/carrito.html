@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Viveros Acme - Carrito de Pedidos</title>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet" href="carrito.css">
+</head>
+<body data-page="cliente">
+	<nav class="navbar navbar-dark fixed-top">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="#">Viveros Acme - Cliente</a>
+			<button class="btn btn-outline-light" onclick="logoutAndRedirect()">Cerrar
+				Sesión</button>
+		</div>
+	</nav>
+	<div class="container mt-5">
+		<h2 class="text-center">Carrito de Pedidos</h2>
+		<div th:if="${successMessage}" class="alert alert-success text-center">
+			<span th:text="${successMessage}"></span>
+		</div>
+		<div th:if="${errorMessage}" class="alert alert-danger text-center">
+			<span th:text="${errorMessage}"></span>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-hover table-striped">
+				<thead>
+					<tr>
+						<th>ID Ejemplar</th>
+						<th>Planta</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="ejemplar : ${ejemplaresCarrito}">
+						<td th:text="${ejemplar.id}"></td>
+						<td th:text="${ejemplar.planta.nombreComun}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<form th:action="@{/confirmarPedido}" method="post">
+			<button type="submit" class="btn btn-primary w-100 mt-3">Confirmar
+				Pedido</button>
+		</form>
+	</div>
+	<script>
+    function logoutAndRedirect() {
+      fetch('/logout', { method: 'GET' })
+          .then(() => { window.location.href = '/inicio'; })
+          .catch(() => { window.location.href = '/inicio'; });
+    }
+  </script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

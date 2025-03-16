@@ -17,6 +17,12 @@ public class Persona {
 	@Column(nullable = false)
 	private String password;
 
+	// Campos extra para clientes
+	private String fechaNacimiento;
+	private String nifNie;
+	private String direccionEnvio;
+	private String telefono;
+
 	public Persona() {
 	}
 
@@ -27,6 +33,7 @@ public class Persona {
 		this.password = password;
 	}
 
+	// Getters y Setters
 	public Long getId() {
 		return id;
 	}
@@ -65,5 +72,37 @@ public class Persona {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getFechaNacimiento() {
+		return fechaNacimiento;
+	}
+
+	public void setFechaNacimiento(String fechaNacimiento) {
+		this.fechaNacimiento = fechaNacimiento;
+	}
+
+	public String getNifNie() {
+		return nifNie;
+	}
+
+	public void setNifNie(String nifNie) {
+		this.nifNie = nifNie;
+	}
+
+	public String getDireccionEnvio() {
+		return direccionEnvio;
+	}
+
+	public void setDireccionEnvio(String direccionEnvio) {
+		this.direccionEnvio = direccionEnvio;
+	}
+
+	public String getTelefono() {
+		return telefono;
+	}
+
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
 	}
 }

@@ -1,0 +1,80 @@
+* {
+	font-family: "Patrick Hand", cursive;
+}
+
+body {
+	background-color: #d9ecbf;
+	color: #3f4a4e;
+}
+
+.navbar {
+	background-color: #3f4a4e;
+}
+
+.user-img {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	border: 2px solid #d3ac47;
+	cursor: pointer;
+}
+
+.sidebar {
+	position: fixed;
+	left: -270px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 270px;
+	height: 60%;
+	background-color: #3f4a4e;
+	transition: left 0.3s ease-in-out;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+	box-shadow: 4px 0 10px rgba(0, 0, 0, 0.2);
+	border-radius: 10px;
+}
+
+.sidebar.show {
+	left: 10px;
+}
+
+.sidebar a {
+	color: white;
+	text-decoration: none;
+	display: block;
+	padding: 15px 20px;
+	font-size: 18px;
+	width: 80%;
+	text-align: center;
+	border-radius: 5px;
+	margin-bottom: 10px;
+	transition: all 0.3s;
+	background-color: #638869;
+}
+
+.sidebar a:hover {
+	background-color: #7fa983;
+	transform: scale(1.05);
+}
+
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	display: none;
+	z-index: 500;
+}
+
+.overlay.show {
+	display: block;
+}
+
+.main-content {
+	padding: 80px 20px;
+}
