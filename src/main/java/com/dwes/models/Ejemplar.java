@@ -9,19 +9,14 @@ public class Ejemplar {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
 	private String nombre;
-
 	@ManyToOne
 	@JoinColumn(name = "idPlanta")
 	private Planta planta;
-
 	@OneToMany(mappedBy = "ejemplar", cascade = CascadeType.ALL)
 	private List<Mensaje> mensajes;
-
 	@Transient
 	private int numeroMensajes;
-
 	@Transient
 	private LocalDateTime ultimoMensaje;
 

@@ -12,44 +12,44 @@ import java.util.List;
 @Transactional
 public class MensajeServiceImpl implements MensajeService {
 
-    private final MensajeRepository mensajeRepository;
+	private final MensajeRepository mensajeRepository;
 
-    public MensajeServiceImpl(MensajeRepository mensajeRepository) {
-        this.mensajeRepository = mensajeRepository;
-    }
+	public MensajeServiceImpl(MensajeRepository mensajeRepository) {
+		this.mensajeRepository = mensajeRepository;
+	}
 
-    @Override
-    public List<Mensaje> listarTodos() {
-        return mensajeRepository.findAll();
-    }
+	@Override
+	public List<Mensaje> listarTodos() {
+		return mensajeRepository.findAll();
+	}
 
-    @Override
-    public void guardar(Mensaje mensaje) {
-        mensajeRepository.save(mensaje);
-    }
+	@Override
+	public void guardar(Mensaje mensaje) {
+		mensajeRepository.save(mensaje);
+	}
 
-    @Override
-    public List<Mensaje> buscarPorPersona(Long personaId) {
-        return mensajeRepository.findByPersonaId(personaId);
-    }
+	@Override
+	public List<Mensaje> buscarPorPersona(Long personaId) {
+		return mensajeRepository.findByPersonaId(personaId);
+	}
 
-    @Override
-    public List<Mensaje> buscarPorEjemplar(Long ejemplarId) {
-        return mensajeRepository.findByEjemplarId(ejemplarId);
-    }
+	@Override
+	public List<Mensaje> buscarPorEjemplar(Long ejemplarId) {
+		return mensajeRepository.findByEjemplarId(ejemplarId);
+	}
 
-    @Override
-    public List<Mensaje> buscarPorRangoFechas(LocalDateTime inicio, LocalDateTime fin) {
-        return mensajeRepository.findByFechaHoraBetween(inicio, fin);
-    }
+	@Override
+	public List<Mensaje> buscarPorRangoFechas(LocalDateTime inicio, LocalDateTime fin) {
+		return mensajeRepository.findByFechaHoraBetween(inicio, fin);
+	}
 
-    @Override
-    public List<Mensaje> obtenerMensajesPorEjemplarOrdenados(Long ejemplarId) {
-        return mensajeRepository.findByEjemplarIdOrderByFechaHoraAsc(ejemplarId);
-    }
+	@Override
+	public List<Mensaje> obtenerMensajesPorEjemplarOrdenados(Long ejemplarId) {
+		return mensajeRepository.findByEjemplarIdOrderByFechaHoraAsc(ejemplarId);
+	}
 
-    @Override
-    public List<Mensaje> buscarPorPlanta(Long plantaId) {
-        return mensajeRepository.findByPlantaId(plantaId);
-    }
+	@Override
+	public List<Mensaje> buscarPorPlanta(Long plantaId) {
+		return mensajeRepository.findByPlantaId(plantaId);
+	}
 }

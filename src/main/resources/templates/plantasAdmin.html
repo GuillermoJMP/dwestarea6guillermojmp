@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="plantasAdmin.css">
 </head>
 <body data-page="plantas">
-    <!-- Navbar -->
     <nav class="navbar navbar-dark fixed-top">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <button class="btn btn-outline-light" id="menuToggle">☰ Menú</button>
@@ -25,7 +24,6 @@
             </div>
         </div>
     </nav>
-    <!-- Sidebar: Solo ADMIN ve Gestión de Plantas y Personas; ADMIN o PERSONAL ve Ejemplares y Mensajes -->
     <nav class="sidebar" id="sidebar">
         <a th:href="@{/inicio}">🏡 Inicio</a>
         <a th:href="@{/plantasAdmin}" th:if="${session.rol == 'ADMIN'}">🌱 Gestión de Plantas</a>
@@ -34,7 +32,6 @@
         <a th:href="@{/personaAdmin}" th:if="${session.rol == 'ADMIN'}">👥 Gestión de Personas</a>
     </nav>
     <div class="overlay" id="overlay"></div>
-    <!-- Contenido Principal -->
     <main class="container mt-5 main-content">
         <h2 class="text-center">Gestión de Plantas</h2>
         <div th:if="${successMessage}" class="alert alert-success text-center fade-message">
@@ -44,7 +41,6 @@
             <span th:text="${errorMessage}"></span>
         </div>
         <div class="row">
-            <!-- Formulario de Registro/Edición -->
             <div class="col-md-6 mb-4">
                 <h5 id="tituloFormulario" th:text="${planta.id != null ? 'Editar Planta' : 'Añadir Planta'}"></h5>
                 <div class="form-container">
@@ -69,7 +65,6 @@
                     </form>
                 </div>
             </div>
-            <!-- Listado de Plantas -->
             <div class="col-md-6 mb-4">
                 <h5>Listado de Plantas</h5>
                 <div class="content-box">
@@ -91,7 +86,13 @@
                                     <td th:text="${planta.nombreComun}"></td>
                                     <td th:text="${planta.nombreCientifico}"></td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-warning edit-btn" th:data-id="${planta.id}" th:data-codigo="${planta.codigo}" th:data-nombre-comun="${planta.nombreComun}" th:data-nombre-cientifico="${planta.nombreCientifico}">Editar</button>
+                                        <button type="button" class="btn btn-sm btn-warning edit-btn" 
+                                            th:data-id="${planta.id}" 
+                                            th:data-codigo="${planta.codigo}" 
+                                            th:data-nombre-comun="${planta.nombreComun}" 
+                                            th:data-nombre-cientifico="${planta.nombreCientifico}">
+                                            Editar
+                                        </button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -101,7 +102,6 @@
             </div>
         </div>
     </main>
-    <!-- JavaScript -->
     <script>
         document.getElementById("menuToggle").addEventListener("click", function () {
             document.getElementById("sidebar").classList.toggle("show");

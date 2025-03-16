@@ -8,21 +8,20 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
-    @Query("SELECT m FROM Mensaje m WHERE m.persona.id = :personaId")
-    List<Mensaje> findByPersonaId(Long personaId);
+	@Query("SELECT m FROM Mensaje m WHERE m.persona.id = :personaId")
+	List<Mensaje> findByPersonaId(Long personaId);
 
-    @Query("SELECT m FROM Mensaje m WHERE m.ejemplar.id = :ejemplarId")
-    List<Mensaje> findByEjemplarId(Long ejemplarId);
+	@Query("SELECT m FROM Mensaje m WHERE m.ejemplar.id = :ejemplarId")
+	List<Mensaje> findByEjemplarId(Long ejemplarId);
 
-    @Query("SELECT m FROM Mensaje m WHERE m.fechaHora BETWEEN :inicio AND :fin")
-    List<Mensaje> findByFechaHoraBetween(LocalDateTime inicio, LocalDateTime fin);
+	@Query("SELECT m FROM Mensaje m WHERE m.fechaHora BETWEEN :inicio AND :fin")
+	List<Mensaje> findByFechaHoraBetween(LocalDateTime inicio, LocalDateTime fin);
 
-    @Query("SELECT m FROM Mensaje m WHERE m.ejemplar.id = :ejemplarId ORDER BY m.fechaHora ASC")
-    List<Mensaje> findByEjemplarIdOrderByFechaHoraAsc(Long ejemplarId);
+	@Query("SELECT m FROM Mensaje m WHERE m.ejemplar.id = :ejemplarId ORDER BY m.fechaHora ASC")
+	List<Mensaje> findByEjemplarIdOrderByFechaHoraAsc(Long ejemplarId);
 
-    Optional<Mensaje> findTopByEjemplarIdOrderByFechaHoraDesc(Long ejemplarId);
+	Optional<Mensaje> findTopByEjemplarIdOrderByFechaHoraDesc(Long ejemplarId);
 
-    // Nuevo método para filtrar por tipo de planta (id de la planta)
-    @Query("SELECT m FROM Mensaje m WHERE m.ejemplar.planta.id = :plantaId")
-    List<Mensaje> findByPlantaId(Long plantaId);
+	@Query("SELECT m FROM Mensaje m WHERE m.ejemplar.planta.id = :plantaId")
+	List<Mensaje> findByPlantaId(Long plantaId);
 }

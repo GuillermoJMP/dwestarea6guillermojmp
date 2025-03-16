@@ -82,4 +82,28 @@ public class EjemplarController {
 		}
 		return "redirect:/ejemplaresAdmin";
 	}
+
+	// Nuevo endpoint para modificar ejemplar: asignar una nueva planta
+	@PostMapping("/modificarEjemplar")
+	public String modificarEjemplar(@RequestParam Long ejemplarId, @RequestParam Long nuevaPlantaId,
+			RedirectAttributes redirectAttributes, HttpSession session) {
+		String rol = (String) session.getAttribute("rol");
+		if (rol == null || (!rol.equals("ADMIN") && !rol.equals("PERSONAL"))) {
+			redirectAttributes.addFlashAttribute("errorMessage", "Acceso denegado. No tienes permisos.");
+			return "redirect:/inicio";
+		}
+		Optional<Ejemplar> ejemplarOpt = ejemplarService.obtenerPorId(ejemplarId);
+		Optional<Planta> plantaOpt = plantaService.obtenerPorId(nuevaPlantaId);
+		if (ejemplarOpt.isPresent() && plantaOpt.isPresent()) {
+			Ejemplar ejemplar = ejemplarOpt.get();
+			Planta nuevaPlanta = plantaOpt.get();
+			ejemplar.setPlanta(nuevaPlanta);
+			ejemplar.setNombre(nuevaPlanta.getCodigo() + "_" + ejemplar.getId());
+			ejemplarService.guardar(ejemplar);
+			redirectAttributes.addFlashAttribute("successMessage", "Ejemplar modificado correctamente.");
+		} else {
+			redirectAttributes.addFlashAttribute("errorMessage", "Error al modificar el ejemplar.");
+		}
+		return "redirect:/ejemplaresAdmin";
+	}
 }
