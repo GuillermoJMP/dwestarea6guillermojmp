@@ -10,7 +10,9 @@ public class Planta {
 
 	@Column(unique = true)
 	private String codigo;
+
 	private String nombreComun;
+
 	private String nombreCientifico;
 
 	// Getters y Setters

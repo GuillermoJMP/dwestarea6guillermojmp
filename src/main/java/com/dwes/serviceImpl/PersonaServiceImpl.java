@@ -44,4 +44,9 @@ public class PersonaServiceImpl implements PersonaService {
 	public boolean existeUsuario(String usuario) {
 		return personaRepository.existsByUsuario(usuario);
 	}
+
+	@Override
+	public Persona obtenerPorUsuario(String usuario) {
+		return personaRepository.findByUsuario(usuario);
+	}
 }

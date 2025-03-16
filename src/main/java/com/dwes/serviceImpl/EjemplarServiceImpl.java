@@ -51,6 +51,7 @@ public class EjemplarServiceImpl implements EjemplarService {
 
 	@Override
 	public LocalDateTime obtenerUltimaFechaMensaje(Long ejemplarId) {
-		return mensajeRepository.findTopByEjemplarIdOrderByFechaHoraDesc(ejemplarId).map(Mensaje::getFechaHora).orElse(null);
+		return mensajeRepository.findTopByEjemplarIdOrderByFechaHoraDesc(ejemplarId).map(Mensaje::getFechaHora)
+				.orElse(null);
 	}
 }

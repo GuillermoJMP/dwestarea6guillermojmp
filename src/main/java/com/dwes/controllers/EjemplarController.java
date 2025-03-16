@@ -83,7 +83,6 @@ public class EjemplarController {
 		return "redirect:/ejemplaresAdmin";
 	}
 
-	// Nuevo endpoint para modificar ejemplar: asignar una nueva planta
 	@PostMapping("/modificarEjemplar")
 	public String modificarEjemplar(@RequestParam Long ejemplarId, @RequestParam Long nuevaPlantaId,
 			RedirectAttributes redirectAttributes, HttpSession session) {

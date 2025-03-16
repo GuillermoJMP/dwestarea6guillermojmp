@@ -1,17 +1,22 @@
 package com.dwes.serviceImpl;
 
 import com.dwes.models.Credenciales;
+import com.dwes.models.Persona;
 import com.dwes.repositories.CredencialesRepository;
 import com.dwes.services.CredencialesService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.dwes.repositories.PersonaRepository;
 
 @Service
 public class CredencialesServiceImpl implements CredencialesService {
 
 	@Autowired
 	private CredencialesRepository credencialesRepository;
+
+	@Autowired
+	private PersonaRepository personaRepository;
 
 	@Override
 	public boolean autenticar(String usuario, String password) {
@@ -32,9 +37,16 @@ public class CredencialesServiceImpl implements CredencialesService {
 	@PostConstruct
 	public void crearAdminSiNoExiste() {
 		if (credencialesRepository.findByUsuario("admin") == null) {
-			Credenciales admin = new Credenciales("admin", "admin", "ADMIN");
-			credencialesRepository.save(admin);
-			System.out.println("🛠️ Usuario admin creado automáticamente.");
+			credencialesRepository.save(new Credenciales("admin", "admin", "ADMIN"));
+		}
+		if (personaRepository.findByUsuario("admin") == null) {
+			Persona adminPersona = new Persona();
+			adminPersona.setNombre("Administrador");
+			adminPersona.setEmail("admin@tuapp.com");
+			adminPersona.setUsuario("admin");
+			adminPersona.setPassword("admin");
+			personaRepository.save(adminPersona);
 		}
 	}
+
 }

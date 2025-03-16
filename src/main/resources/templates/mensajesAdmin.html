@@ -11,6 +11,12 @@
 	href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap"
 	rel="stylesheet">
 <link rel="stylesheet" th:href="mensajesAdmin.css">
+<style>
+.table-responsive {
+	max-height: 300px;
+	overflow-y: auto;
+}
+</style>
 </head>
 <body data-page="mensajesAdmin">
 	<nav class="navbar navbar-dark fixed-top">
@@ -58,7 +64,6 @@
 			<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 		</div>
 		<div class="row">
-			<!-- Filtros: por Tipo de Planta, Ejemplar y (opcionalmente) por Persona -->
 			<div class="col-md-4">
 				<h5>Filtrar por Tipo de Planta</h5>
 				<form method="get" action="/mensajesAdmin">
@@ -79,7 +84,7 @@
 					<div class="input-group mb-3">
 						<select name="ejemplarId" class="form-select"
 							onchange="this.form.submit()">
-							<option value="">Mostrar Todos</option>
+							<option value="">Mostrar Solo Ejemplares con Mensajes</option>
 							<option th:each="ejemplar : ${ejemplares}"
 								th:value="${ejemplar.id}" th:text="${ejemplar.nombre}"
 								th:selected="${ejemplar.id == ejemplarId}"></option>
@@ -87,9 +92,18 @@
 					</div>
 				</form>
 			</div>
-			<!-- Filtro por Persona puede mantenerse en el listado, pero para la creación de mensajes se elimina -->
+			<div class="col-md-4">
+				<h5>Filtrar por Fecha</h5>
+				<form method="get" action="/mensajesAdmin">
+					<div class="input-group mb-3">
+						<input type="date" name="inicio" class="form-control"
+							placeholder="Desde"> <input type="date" name="fin"
+							class="form-control" placeholder="Hasta">
+						<button class="btn btn-outline-secondary" type="submit">Filtrar</button>
+					</div>
+				</form>
+			</div>
 		</div>
-		<!-- Formulario de Registro de Mensajes (sin selección de usuario) -->
 		<div class="row">
 			<div class="col-md-6">
 				<h5>Añadir Mensaje</h5>
@@ -111,7 +125,6 @@
 					<button type="submit" class="btn btn-primary w-100">Guardar</button>
 				</form>
 			</div>
-			<!-- Listado de Mensajes con scroll para hasta 5 registros visibles -->
 			<div class="col-md-6">
 				<h5>Listado de Mensajes</h5>
 				<div class="table-responsive"
@@ -126,6 +139,10 @@
 							</tr>
 						</thead>
 						<tbody>
+							<tr th:if="${#lists.isEmpty(mensajes)}">
+								<td colspan="4" class="text-center">No existen mensajes
+									para los filtros aplicados.</td>
+							</tr>
 							<tr th:each="mensaje : ${mensajes}">
 								<td
 									th:text="${#temporals.format(mensaje.fechaHora, 'dd/MM/yyyy HH:mm')}"></td>
@@ -140,36 +157,36 @@
 		</div>
 	</main>
 	<script>
-        document.getElementById("menuToggle").addEventListener("click", function () {
-            document.getElementById("sidebar").classList.toggle("show");
-            document.getElementById("overlay").classList.toggle("show");
-        });
-        document.getElementById("overlay").addEventListener("click", function () {
-            document.getElementById("sidebar").classList.remove("show");
-            document.getElementById("overlay").classList.remove("show");
-        });
-        document.getElementById("mensajeForm").addEventListener("submit", function (event) {
-            let mensaje = document.getElementById("mensaje").value.trim();
-            let ejemplarSelect = document.getElementById("ejemplarSelect").value;
-            if (mensaje === "") {
-                alert("El mensaje no puede estar vacío.");
-                event.preventDefault();
-            }
-            if (ejemplarSelect === "") {
-                alert("Debes seleccionar un ejemplar.");
-                event.preventDefault();
-            }
-        });
-        setTimeout(() => {
-            let alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => alert.classList.add('fade'));
-        }, 5000);
-        function logoutAndRedirect() {
-            fetch('/logout', { method: 'GET' })
-                .then(() => { sessionStorage.clear(); window.location.href = '/inicio'; })
-                .catch(() => { window.location.href = '/inicio'; });
-        }
-    </script>
+    document.getElementById("menuToggle").addEventListener("click", function () {
+      document.getElementById("sidebar").classList.toggle("show");
+      document.getElementById("overlay").classList.toggle("show");
+    });
+    document.getElementById("overlay").addEventListener("click", function () {
+      document.getElementById("sidebar").classList.remove("show");
+      document.getElementById("overlay").classList.remove("show");
+    });
+    document.getElementById("mensajeForm").addEventListener("submit", function (event) {
+      let mensaje = document.getElementById("mensaje").value.trim();
+      let ejemplarSelect = document.getElementById("ejemplarSelect").value;
+      if (mensaje === "") {
+        alert("El mensaje no puede estar vacío.");
+        event.preventDefault();
+      }
+      if (ejemplarSelect === "") {
+        alert("Debes seleccionar un ejemplar.");
+        event.preventDefault();
+      }
+    });
+    setTimeout(() => {
+      let alerts = document.querySelectorAll('.alert');
+      alerts.forEach(alert => alert.classList.add('fade'));
+    }, 5000);
+    function logoutAndRedirect() {
+      fetch('/logout', { method: 'GET' })
+          .then(() => { sessionStorage.clear(); window.location.href = '/inicio'; })
+          .catch(() => { window.location.href = '/inicio'; });
+    }
+  </script>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
