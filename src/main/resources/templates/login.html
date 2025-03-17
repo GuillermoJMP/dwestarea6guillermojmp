@@ -19,7 +19,9 @@
 	<div class="overlay" id="overlay"></div>
 	<div class="container">
 		<div class="login-container">
-			<h1 class="login-title">Viveros Acme</h1>
+			<a th:href="@{/inicio}" class="login-title">
+				<h1>Viveros Acme</h1>
+			</a>
 			<div th:if="${param.error == 'credencialesInvalidas'}"
 				class="alert alert-danger text-center">Usuario o contraseña
 				incorrectos.</div>
