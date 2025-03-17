@@ -12,20 +12,27 @@ public class ConfiguracionSeguridad {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.csrf().disable() // Deshabilitar CSRF para pruebas; en producción, habilítalo y configúralo
-								// correctamente.
-				.authorizeHttpRequests(authorize -> authorize
-						.requestMatchers("/inicio", "/verPlantas", "/registroCliente", "/guardarCliente", "/login",
-								"/autenticar")
-						.permitAll().requestMatchers("/plantasAdmin", "/personaAdmin").hasRole("ADMIN")
-						.requestMatchers("/ejemplaresAdmin", "/mensajesAdmin", "/stockAdmin")
-						.hasAnyRole("ADMIN", "PERSONAL")
-						.requestMatchers("/zonaCliente", "/pedidoCliente", "/carrito", "/confirmarPedido",
-								"/misPedidos")
-						.hasRole("CLIENTE").anyRequest().authenticated())
+		http.csrf().disable().authorizeHttpRequests(authorize -> authorize
+				// Permitir acceso público a archivos estáticos (CSS, JS, imágenes)
+				.requestMatchers("/css/**", "/js/**", "/images/**", "/registroCliente.css").permitAll()
+				// Permitir acceso a rutas públicas
+				.requestMatchers("/inicio", "/verPlantas", "/registroCliente", "/guardarCliente", "/login",
+						"/autenticar")
+				.permitAll()
+				// Rutas restringidas a ADMIN
+				.requestMatchers("/plantasAdmin", "/personaAdmin").hasRole("ADMIN")
+				// Rutas accesibles para ADMIN y PERSONAL
+				.requestMatchers("/ejemplaresAdmin", "/mensajesAdmin", "/stockAdmin").hasAnyRole("ADMIN", "PERSONAL")
+				// Rutas accesibles solo para CLIENTES
+				.requestMatchers("/zonaCliente", "/pedidoCliente", "/carrito", "/confirmarPedido", "/misPedidos")
+				.hasRole("CLIENTE")
+				// Cualquier otra petición requiere autenticación
+				.anyRequest().authenticated())
+				// Configurar login y logout
 				.formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/inicio", true).permitAll())
 				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/inicio").permitAll())
 				.sessionManagement(session -> session.maximumSessions(1));
+
 		return http.build();
 	}
 }

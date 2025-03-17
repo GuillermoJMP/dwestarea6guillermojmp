@@ -1,37 +1,111 @@
+/* Fuente y colores base */
 * {
-	font-family: "Patrick Hand", cursive;
+  font-family: "Patrick Hand", cursive;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-	background-color: #d9ecbf;
-	color: #3f4a4e;
+  background-color: #d9ecbf;
+  color: #3f4a4e;
+  padding-top: 70px; /* Evita que el contenido quede oculto por la navbar */
 }
 
-/* Navbar */
+/* NAVBAR */
 .navbar {
-	background-color: #3f4a4e;
+  background-color: #3f4a4e;
+  padding: 10px 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
 }
 
-/* Contenedor del formulario */
+/* Ajustes para el enlace de "Viveros Acme" */
+.navbar-brand {
+  font-size: 26px;
+  font-weight: bold;
+  color: white !important;
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.navbar-brand:hover {
+  color: #d3ac47 !important; /* Cambio de color en hover */
+  transform: scale(1.05); /* Efecto de crecimiento */
+}
+
+/* CONTENEDOR PRINCIPAL */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh; /* Centra verticalmente */
+  text-align: center;
+}
+
+/* TÍTULO DEL FORMULARIO */
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* FORMULARIO */
 .form-container {
-	background: white;
-	padding: 20px;
-	border-radius: 10px;
-	margin-top: 20px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 100%;
+  text-align: left; /* Asegura que los labels y campos estén alineados correctamente */
 }
 
-/* Inputs, textarea, select */
+/* CAMPOS DEL FORMULARIO */
 input, textarea, select {
-	transition: 0.3s;
+  border: 2px solid #638869;
+  border-radius: 5px;
+  padding: 10px;
+  width: 100%;
+  transition: all 0.3s ease-in-out;
 }
 
 input:focus, textarea:focus, select:focus {
-	transform: scale(1.02);
+  border-color: #d3ac47;
+  box-shadow: 0 0 5px rgba(211, 172, 71, 0.5);
+  transform: scale(1.02);
 }
 
-/* Botón primario */
+/* BOTÓN DE ENVÍO */
 .btn-primary {
-	background-color: #007bff;
-	border-color: #007bff;
+  background-color: #638869;
+  border: none;
+  padding: 12px;
+  font-size: 18px;
+  border-radius: 5px;
+  width: 100%;
+  transition: all 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #7fa983;
+  transform: scale(1.05);
+}
+
+/* MENSAJES DE ALERTA */
+.alert {
+  padding: 10px;
+  border-radius: 5px;
+}
+
+/* RESPONSIVIDAD - Ajustes en pantallas más pequeñas */
+@media (max-width: 768px) {
+  .form-container {
+    width: 90%; /* Reduce el ancho en pantallas pequeñas */
+  }
 }
