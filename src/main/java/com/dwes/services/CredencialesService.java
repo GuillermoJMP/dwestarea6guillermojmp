@@ -1,11 +1,12 @@
 package com.dwes.services;
 
 import com.dwes.models.Credenciales;
+import java.util.Optional;
 
 public interface CredencialesService {
 	void guardar(Credenciales credenciales);
 
-	boolean autenticar(String usuario, String password);
+	Optional<Credenciales> obtenerUsuario(String usuario);
 
-	Credenciales obtenerUsuario(String usuario);
+	boolean autenticar(String usuario, String password);
 }
