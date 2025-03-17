@@ -2,37 +2,59 @@ package com.dwes.configuracion;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+import com.dwes.seguridad.DetallesUsuarioServicio;
 
 @Configuration
-@EnableWebSecurity
 public class ConfiguracionSeguridad {
 
+	private final DetallesUsuarioServicio detallesUsuarioServicio;
+
+	public ConfiguracionSeguridad(DetallesUsuarioServicio detallesUsuarioServicio) {
+		this.detallesUsuarioServicio = detallesUsuarioServicio;
+	}
+
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeHttpRequests(authorize -> authorize
-				// Permitir acceso público a archivos estáticos (CSS, JS, imágenes)
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http.csrf().disable().authorizeHttpRequests(auth -> auth
 				.requestMatchers("/css/**", "/js/**", "/images/**", "/registroCliente.css").permitAll()
-				// Permitir acceso a rutas públicas
 				.requestMatchers("/inicio", "/verPlantas", "/registroCliente", "/guardarCliente", "/login",
 						"/autenticar")
-				.permitAll()
-				// Rutas restringidas a ADMIN
-				.requestMatchers("/plantasAdmin", "/personaAdmin").hasRole("ADMIN")
-				// Rutas accesibles para ADMIN y PERSONAL
-				.requestMatchers("/ejemplaresAdmin", "/mensajesAdmin", "/stockAdmin").hasAnyRole("ADMIN", "PERSONAL")
-				// Rutas accesibles solo para CLIENTES
+				.permitAll().requestMatchers("/plantasAdmin", "/personaAdmin").hasAuthority("ROLE_ADMIN")
+				.requestMatchers("/ejemplaresAdmin", "/mensajesAdmin", "/stockAdmin")
+				.hasAnyAuthority("ROLE_ADMIN", "ROLE_PERSONAL")
 				.requestMatchers("/zonaCliente", "/pedidoCliente", "/carrito", "/confirmarPedido", "/misPedidos")
-				.hasRole("CLIENTE")
-				// Cualquier otra petición requiere autenticación
-				.anyRequest().authenticated())
-				// Configurar login y logout
+				.hasAuthority("ROLE_CLIENTE").anyRequest().authenticated())
 				.formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/inicio", true).permitAll())
 				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/inicio").permitAll())
-				.sessionManagement(session -> session.maximumSessions(1));
-
+				.authenticationProvider(authenticationProvider());
 		return http.build();
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+			throws Exception {
+		return authenticationConfiguration.getAuthenticationManager();
+	}
+
+	@Bean
+	public AuthenticationProvider authenticationProvider() {
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+		provider.setUserDetailsService(detallesUsuarioServicio);
+		provider.setPasswordEncoder(passwordEncoder());
+		return provider;
 	}
 }

@@ -7,7 +7,9 @@ import com.dwes.repositories.PersonaRepository;
 import com.dwes.services.CredencialesService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 @Service
 public class CredencialesServiceImpl implements CredencialesService {
@@ -18,33 +20,38 @@ public class CredencialesServiceImpl implements CredencialesService {
 	@Autowired
 	private PersonaRepository personaRepository;
 
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
 	@Override
 	public boolean autenticar(String usuario, String password) {
-		Credenciales credenciales = credencialesRepository.findByUsuario(usuario);
-		return credenciales != null && credenciales.getPassword().equals(password);
+		Optional<Credenciales> credencialesOpt = Optional.ofNullable(credencialesRepository.findByUsuario(usuario));
+		return credencialesOpt.isPresent() && passwordEncoder.matches(password, credencialesOpt.get().getPassword());
 	}
 
 	@Override
 	public void guardar(Credenciales credenciales) {
+		credenciales.setPassword(passwordEncoder.encode(credenciales.getPassword()));
 		credencialesRepository.save(credenciales);
 	}
 
 	@Override
-	public Credenciales obtenerUsuario(String usuario) {
-		return credencialesRepository.findByUsuario(usuario);
+	public Optional<Credenciales> obtenerUsuario(String usuario) {
+		return Optional.ofNullable(credencialesRepository.findByUsuario(usuario));
 	}
 
 	@PostConstruct
 	public void crearAdminSiNoExiste() {
 		if (credencialesRepository.findByUsuario("admin") == null) {
-			credencialesRepository.save(new Credenciales("admin", "admin", "ADMIN"));
+			Credenciales adminCredenciales = new Credenciales("admin", passwordEncoder.encode("admin"), "ROLE_ADMIN");
+			credencialesRepository.save(adminCredenciales);
 		}
 		if (personaRepository.findByUsuario("admin") == null) {
 			Persona adminPersona = new Persona();
 			adminPersona.setNombre("Administrador");
 			adminPersona.setEmail("admin@tuapp.com");
 			adminPersona.setUsuario("admin");
-			adminPersona.setPassword("admin");
+			adminPersona.setPassword(passwordEncoder.encode("admin"));
 			personaRepository.save(adminPersona);
 		}
 	}
