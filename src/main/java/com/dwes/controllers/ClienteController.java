@@ -7,7 +7,10 @@ import com.dwes.services.CredencialesService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -49,5 +52,41 @@ public class ClienteController {
 		redirectAttributes.addFlashAttribute("successMessage",
 				"Cliente registrado correctamente. Por favor, inicie sesión.");
 		return "redirect:/login";
+	}
+
+	@GetMapping("/zonaCliente")
+	public String mostrarZonaCliente(HttpSession session, Model model) {
+		String rol = (String) session.getAttribute("rol");
+
+		if (rol == null || !rol.equals("CLIENTE")) {
+			return "redirect:/login?error=noAutorizado";
+		}
+
+		model.addAttribute("mensaje", "Bienvenido a la zona cliente.");
+		return "zonaCliente";
+	}
+
+	@GetMapping("/misPedidos")
+	public String mostrarMisPedidos(HttpSession session, Model model) {
+		String rol = (String) session.getAttribute("rol");
+
+		if (rol == null || !rol.equals("CLIENTE")) {
+			return "redirect:/login?error=noAutorizado";
+		}
+
+		model.addAttribute("mensaje", "Aquí puedes ver tus pedidos.");
+		return "misPedidos";
+	}
+
+	@GetMapping("/pedidoCliente")
+	public String mostrarPedidoCliente(HttpSession session, Model model) {
+		String rol = (String) session.getAttribute("rol");
+
+		if (rol == null || !rol.equals("CLIENTE")) {
+			return "redirect:/login?error=noAutorizado";
+		}
+
+		model.addAttribute("mensaje", "Aquí puedes hacer un nuevo pedido.");
+		return "pedidoCliente";
 	}
 }
