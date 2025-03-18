@@ -27,7 +27,6 @@ public class ClienteController {
 	@PostMapping("/guardarCliente")
 	public String guardarCliente(@ModelAttribute Persona cliente, RedirectAttributes redirectAttributes,
 			HttpSession session) {
-		// Validar que todos los campos estén completos
 		if (cliente.getNombre().trim().isEmpty() || cliente.getEmail().trim().isEmpty()
 				|| cliente.getUsuario().trim().isEmpty() || cliente.getPassword().trim().isEmpty()
 				|| cliente.getFechaNacimiento() == null || cliente.getNifNie().trim().isEmpty()
@@ -43,8 +42,7 @@ public class ClienteController {
 			redirectAttributes.addFlashAttribute("errorMessage", "El nombre de usuario ya está en uso.");
 			return "redirect:/registroCliente";
 		}
-		// Asignar rol CLIENTE (en este caso, simplemente se usa la misma entidad
-		// Persona)
+
 		cliente = personaService.guardar(cliente);
 		Credenciales cred = new Credenciales(cliente.getUsuario(), cliente.getPassword(), "CLIENTE");
 		credencialesService.guardar(cred);

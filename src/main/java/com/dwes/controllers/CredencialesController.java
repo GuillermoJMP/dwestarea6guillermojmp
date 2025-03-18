@@ -54,11 +54,10 @@ public class CredencialesController {
 
 		System.out.println("Usuario autenticado: " + usuario + ", Rol: " + rol);
 
-		// 🔥 Establecemos manualmente el contexto de seguridad
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(usuario, null,
 				AuthorityUtils.createAuthorityList(rol));
 		SecurityContextHolder.getContext().setAuthentication(auth);
-		session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext()); // 🔥 Guardamos en sesión
+		session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
 		session.setAttribute("usuarioLogeado", usuario);
 		session.setAttribute("rol", rol);

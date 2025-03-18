@@ -1,87 +1,125 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Viveros Acme - Registro Cliente</title>
- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="registroCliente.css">
-</head>
-<body>
-	<nav class="navbar navbar-dark fixed-top">
-		<div class="container-fluid">
-<a th:href="@{/inicio}" class="navbar-brand">Viveros Acme</a>
-
-		</div>
-	</nav>
-	<div class="container mt-5">
-		<h2 class="text-center">Registro de Cliente</h2>
-		<div th:if="${successMessage}" class="alert alert-success text-center"
-			id="mensajeExito">
-			<span th:text="${successMessage}"></span>
-		</div>
-		<div th:if="${errorMessage}" class="alert alert-danger text-center"
-			id="mensajeError">
-			<span th:text="${errorMessage}"></span>
-		</div>
-		<div class="form-container">
-			<form th:action="@{/guardarCliente}" method="post"
-				id="registroClienteForm">
-				<div class="mb-3">
-					<label class="form-label">Nombre Completo</label> <input
-						type="text" class="form-control" name="nombre" required>
-				</div>
-				<div class="mb-3">
-					<label class="form-label">Fecha de Nacimiento</label> <input
-						type="date" class="form-control" name="fechaNacimiento" required>
-				</div>
-				<div class="mb-3">
-					<label class="form-label">NIF/NIE</label> <input type="text"
-						class="form-control" name="nifNie" required
-						pattern="^[0-9]{8}[A-Z]$"
-						title="Debe ser 8 dígitos seguidos de una letra mayúscula.">
-				</div>
-				<div class="mb-3">
-					<label class="form-label">Dirección de Envío</label> <input
-						type="text" class="form-control" name="direccionEnvio" required>
-				</div>
-				<div class="mb-3">
-					<label class="form-label">Teléfono</label> <input type="text"
-						class="form-control" name="telefono" required>
-				</div>
-				<div class="mb-3">
-					<label class="form-label">Correo Electrónico</label> <input
-						type="email" class="form-control" name="email" required>
-				</div>
-				<div class="mb-3">
-					<label class="form-label">Nombre de Usuario</label> <input
-						type="text" class="form-control" name="usuario" required
-						pattern="^[a-zA-Z0-9]+$"
-						title="Solo letras y números, sin espacios.">
-				</div>
-				<div class="mb-3">
-					<label class="form-label">Contraseña</label> <input type="password"
-						class="form-control" name="password" required minlength="6"
-						pattern="^\S+$"
-						title="No puede contener espacios y debe tener al menos 6 caracteres.">
-				</div>
-				<button type="submit" class="btn btn-primary w-100">Registrar
-					Cliente</button>
-			</form>
-		</div>
-	</div>
-	<script>
-		setTimeout(function() {
-			let mensajeExito = document.getElementById("mensajeExito");
-			let mensajeError = document.getElementById("mensajeError");
-			if (mensajeExito)
-				mensajeExito.style.display = "none";
-			if (mensajeError)
-				mensajeError.style.display = "none";
-		}, 3000);
-	</script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Viveros Acme - Registro Cliente</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="registroCliente.css" />
+  </head>
+  <body>
+    <nav class="navbar navbar-dark fixed-top">
+      <div class="container-fluid">
+        <a th:href="@{/inicio}" class="navbar-brand">Viveros Acme</a>
+      </div>
+    </nav>
+    <div class="container mt-5">
+      <h2 class="text-center">Registro de Cliente</h2>
+      <div
+        th:if="${successMessage}"
+        class="alert alert-success text-center"
+        id="mensajeExito"
+      >
+        <span th:text="${successMessage}"></span>
+      </div>
+      <div
+        th:if="${errorMessage}"
+        class="alert alert-danger text-center"
+        id="mensajeError"
+      >
+        <span th:text="${errorMessage}"></span>
+      </div>
+      <div class="form-container">
+        <form
+          th:action="@{/guardarCliente}"
+          method="post"
+          id="registroClienteForm"
+        >
+          <div class="mb-3">
+            <label class="form-label">Nombre Completo</label>
+            <input type="text" class="form-control" name="nombre" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Fecha de Nacimiento</label>
+            <input
+              type="date"
+              class="form-control"
+              name="fechaNacimiento"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">NIF/NIE</label>
+            <input
+              type="text"
+              class="form-control"
+              name="nifNie"
+              required
+              pattern="^[0-9]{8}[A-Z]$"
+              title="Debe ser 8 dígitos seguidos de una letra mayúscula."
+            />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Dirección de Envío</label>
+            <input
+              type="text"
+              class="form-control"
+              name="direccionEnvio"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Teléfono</label>
+            <input type="text" class="form-control" name="telefono" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Correo Electrónico</label>
+            <input type="email" class="form-control" name="email" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nombre de Usuario</label>
+            <input
+              type="text"
+              class="form-control"
+              name="usuario"
+              required
+              pattern="^[a-zA-Z0-9]+$"
+              title="Solo letras y números, sin espacios."
+            />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Contraseña</label>
+            <input
+              type="password"
+              class="form-control"
+              name="password"
+              required
+              minlength="6"
+              pattern="^\S+$"
+              title="No puede contener espacios y debe tener al menos 6 caracteres."
+            />
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            Registrar Cliente
+          </button>
+        </form>
+      </div>
+    </div>
+    <script>
+      setTimeout(function () {
+        let mensajeExito = document.getElementById("mensajeExito");
+        let mensajeError = document.getElementById("mensajeError");
+        if (mensajeExito) mensajeExito.style.display = "none";
+        if (mensajeError) mensajeError.style.display = "none";
+      }, 3000);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

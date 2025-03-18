@@ -12,7 +12,7 @@ public class Pedido {
 
 	private LocalDateTime fechaCreacion;
 
-	private String estado; // EN_CARRITO, CONFIRMADO, etc.
+	private String estado;
 
 	@ManyToOne
 	@JoinColumn(name = "cliente_id")
@@ -22,7 +22,6 @@ public class Pedido {
 	@JoinTable(name = "pedido_ejemplar", joinColumns = @JoinColumn(name = "pedido_id"), inverseJoinColumns = @JoinColumn(name = "ejemplar_id"))
 	private List<Ejemplar> ejemplares;
 
-	// Getters and setters
 	public Long getId() {
 		return id;
 	}

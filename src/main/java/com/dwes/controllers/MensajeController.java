@@ -64,7 +64,6 @@ public class MensajeController {
 			redirectAttributes.addFlashAttribute("errorMessage", "Error al filtrar mensajes.");
 			return "redirect:/mensajesAdmin";
 		}
-		// Filtrar ejemplares que tienen mensajes para el select
 		List<Ejemplar> ejemplaresConMensajes = ejemplarService.listarTodos().stream()
 				.filter(e -> mensajeService.buscarPorEjemplar(e.getId()).size() > 0).collect(Collectors.toList());
 		model.addAttribute("mensajes", mensajes);
@@ -88,7 +87,6 @@ public class MensajeController {
 			redirectAttributes.addFlashAttribute("errorMessage", "El mensaje no puede estar vacío.");
 			return "redirect:/mensajesAdmin";
 		}
-		// Tomar el usuario logueado (ya registrado en sesión)
 		Persona persona = personaService.obtenerPorId((Long) session.getAttribute("usuarioId"));
 		Optional<Ejemplar> ejemplarOptional = ejemplarService.obtenerPorId(ejemplarId);
 		Ejemplar ejemplar = ejemplarOptional.orElse(null);

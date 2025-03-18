@@ -1,60 +1,74 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Viveros Acme - Realizar Pedido</title>
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-	rel="stylesheet">
-<link
-	href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap"
-	rel="stylesheet">
-<link rel="stylesheet" href="pedidoCliente.css">
-</head>
-<body data-page="cliente">
-	<nav class="navbar navbar-dark fixed-top">
-		<div class="container-fluid">
-			<a class="navbar-brand" href="#">Viveros Acme - Cliente</a>
-			<button class="btn btn-outline-light" onclick="logoutAndRedirect()">Cerrar
-				Sesión</button>
-		</div>
-	</nav>
-	<nav class="sidebar" id="sidebar">
-		<a th:href="@{/zonaCliente}">🏠 Inicio Cliente</a> <a
-			th:href="@{/pedidoCliente}">🛒 Realizar Pedido</a> <a
-			th:href="@{/carrito}">🛍️ Carrito</a> <a th:href="@{/misPedidos}">📄
-			Mis Pedidos</a>
-	</nav>
-	<div class="overlay" id="overlay"></div>
-	<div class="container mt-5">
-		<h2 class="text-center">Realizar Pedido</h2>
-		<p class="text-center">Seleccione un ejemplar de cada tipo de
-			planta disponible:</p>
-		<!-- Se asume que el controlador envía la lista "plantas" y "ejemplares" -->
-		<div th:each="planta : ${plantas}">
-			<h5 th:text="${planta.nombreComun}"></h5>
-			<p>
-				Ejemplares disponibles: <span
-					th:text="${#lists.size(ejemplares.stream().filter(e -> e.planta.id == planta.id && !e.vendido).collect(T(java.util.stream.Collectors).toList()))}"></span>
-			</p>
-			<form th:action="@{/anadirAlCarrito}" method="post">
-				<button type="submit" class="btn btn-success" name="ejemplarId"
-					th:value="${#lists.isEmpty(ejemplares.stream().filter(e -> e.planta.id == planta.id && !e.vendido).collect(T(java.util.stream.Collectors).toList())) ? '' : #lists.first(ejemplares.stream().filter(e -> e.planta.id == planta.id && !e.vendido).collect(T(java.util.stream.Collectors).toList())).id}"
-					th:if="${#lists.size(ejemplares.stream().filter(e -> e.planta.id == planta.id && !e.vendido).collect(T(java.util.stream.Collectors).toList())) > 0}">
-					Añadir un ejemplar</button>
-			</form>
-		</div>
-		<a class="btn btn-primary w-100 mt-3" href="/carrito">Ver Carrito</a>
-	</div>
-	<script>
-    function logoutAndRedirect() {
-      fetch('/logout', { method: 'GET' })
-          .then(() => { window.location.href = '/inicio'; })
-          .catch(() => { window.location.href = '/inicio'; });
-    }
-  </script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Viveros Acme - Realizar Pedido</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="pedidoCliente.css" />
+  </head>
+  <body data-page="cliente">
+    <nav class="navbar navbar-dark fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Viveros Acme - Cliente</a>
+        <button class="btn btn-outline-light" onclick="logoutAndRedirect()">
+          Cerrar Sesión
+        </button>
+      </div>
+    </nav>
+    <nav class="sidebar" id="sidebar">
+      <a th:href="@{/zonaCliente}">🏠 Inicio Cliente</a>
+      <a th:href="@{/pedidoCliente}">🛒 Realizar Pedido</a>
+      <a th:href="@{/carrito}">🛍️ Carrito</a>
+      <a th:href="@{/misPedidos}">📄 Mis Pedidos</a>
+    </nav>
+    <div class="overlay" id="overlay"></div>
+    <div class="container mt-5">
+      <h2 class="text-center">Realizar Pedido</h2>
+      <p class="text-center">
+        Seleccione un ejemplar de cada tipo de planta disponible:
+      </p>
+      <!-- Se asume que el controlador envía la lista "plantas" y "ejemplares" -->
+      <div th:each="planta : ${plantas}">
+        <h5 th:text="${planta.nombreComun}"></h5>
+        <p>
+          Ejemplares disponibles:
+          <span
+            th:text="${#lists.size(ejemplares.stream().filter(e -> e.planta.id == planta.id && !e.vendido).collect(T(java.util.stream.Collectors).toList()))}"
+          ></span>
+        </p>
+        <form th:action="@{/anadirAlCarrito}" method="post">
+          <button
+            type="submit"
+            class="btn btn-success"
+            name="ejemplarId"
+            th:value="${#lists.isEmpty(ejemplares.stream().filter(e -> e.planta.id == planta.id && !e.vendido).collect(T(java.util.stream.Collectors).toList())) ? '' : #lists.first(ejemplares.stream().filter(e -> e.planta.id == planta.id && !e.vendido).collect(T(java.util.stream.Collectors).toList())).id}"
+            th:if="${#lists.size(ejemplares.stream().filter(e -> e.planta.id == planta.id && !e.vendido).collect(T(java.util.stream.Collectors).toList())) > 0}"
+          >
+            Añadir un ejemplar
+          </button>
+        </form>
+      </div>
+      <a class="btn btn-primary w-100 mt-3" href="/carrito">Ver Carrito</a>
+    </div>
+    <script>
+      function logoutAndRedirect() {
+        fetch("/logout", { method: "GET" })
+          .then(() => {
+            window.location.href = "/inicio";
+          })
+          .catch(() => {
+            window.location.href = "/inicio";
+          });
+      }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

@@ -13,43 +13,40 @@ import java.util.List;
 @Controller
 public class InicioController {
 
-    @Autowired
-    private PlantaService plantaService;
+	@Autowired
+	private PlantaService plantaService;
 
-    // Página de inicio
-    @GetMapping("/inicio")
-    public String mostrarInicio(Model model, HttpSession session) {
-        // Obtener lista de plantas y asegurarse de que están ordenadas
-        List<Planta> plantas = plantaService.listarTodas(); // Asegurar que se devuelven ordenadas
-        model.addAttribute("plantas", plantas);
+	@GetMapping("/inicio")
+	public String mostrarInicio(Model model, HttpSession session) {
+		List<Planta> plantas = plantaService.listarTodas();
+		model.addAttribute("plantas", plantas);
 
-        // Obtener usuario y rol desde la sesión
-        String usuarioLogeado = (String) session.getAttribute("usuarioLogeado");
-        String rolUsuario = (String) session.getAttribute("rol");
+		String usuarioLogeado = (String) session.getAttribute("usuarioLogeado");
+		String rolUsuario = (String) session.getAttribute("rol");
 
-        // Definir valores predeterminados si no hay sesión
-        if (usuarioLogeado == null) {
-            model.addAttribute("nombreUsuario", "Invitado");
-            model.addAttribute("mensaje", "Bienvenido a Viveros Acme. Inicia sesión para acceder a más funcionalidades.");
-            model.addAttribute("rol", "INVITADO");
-        } else {
-            model.addAttribute("nombreUsuario", usuarioLogeado);
-            model.addAttribute("rol", rolUsuario);
+		if (usuarioLogeado == null) {
+			model.addAttribute("nombreUsuario", "Invitado");
+			model.addAttribute("mensaje",
+					"Bienvenido a Viveros Acme. Inicia sesión para acceder a más funcionalidades.");
+			model.addAttribute("rol", "INVITADO");
+		} else {
+			model.addAttribute("nombreUsuario", usuarioLogeado);
+			model.addAttribute("rol", rolUsuario);
 
-            // Mensajes personalizados según el rol
-            switch (rolUsuario) {
-                case "ADMIN":
-                    model.addAttribute("mensaje", "Bienvenido, Administrador. Tienes acceso total al sistema.");
-                    break;
-                case "PERSONAL":
-                    model.addAttribute("mensaje", "Bienvenido, " + usuarioLogeado + ". Puedes registrar y gestionar ejemplares.");
-                    break;
-                default:
-                    model.addAttribute("mensaje", "Bienvenido, " + usuarioLogeado + "!");
-                    break;
-            }
-        }
+			switch (rolUsuario) {
+			case "ADMIN":
+				model.addAttribute("mensaje", "Bienvenido, Administrador. Tienes acceso total al sistema.");
+				break;
+			case "PERSONAL":
+				model.addAttribute("mensaje",
+						"Bienvenido, " + usuarioLogeado + ". Puedes registrar y gestionar ejemplares.");
+				break;
+			default:
+				model.addAttribute("mensaje", "Bienvenido, " + usuarioLogeado + "!");
+				break;
+			}
+		}
 
-        return "inicio";
-    }
+		return "inicio";
+	}
 }

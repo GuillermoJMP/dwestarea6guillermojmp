@@ -43,7 +43,6 @@ public class CredencialesServiceImpl implements CredencialesService {
 	@PostConstruct
 	public void crearAdminSiNoExiste() {
 		if (credencialesRepository.findByUsuario("admin") == null) {
-			// Guardar rol "ADMIN" sin prefijo
 			Credenciales adminCredenciales = new Credenciales("admin", passwordEncoder.encode("admin"), "ADMIN");
 			credencialesRepository.save(adminCredenciales);
 		}

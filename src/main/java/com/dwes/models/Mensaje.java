@@ -17,7 +17,6 @@ public class Mensaje {
 	@JoinColumn(name = "ejemplar_id")
 	private Ejemplar ejemplar;
 
-	// Getters y Setters
 	public Long getId() {
 		return id;
 	}

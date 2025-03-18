@@ -1,167 +1,244 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Viveros Acme - Gestión de Plantas</title>
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-	rel="stylesheet">
-<link
-	href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap"
-	rel="stylesheet">
-<link rel="stylesheet" href="plantasAdmin.css">
-</head>
-<body data-page="plantas">
-	<nav class="navbar navbar-dark fixed-top">
-		<div
-			class="container-fluid d-flex justify-content-between align-items-center">
-			<button class="btn btn-outline-light" id="menuToggle">☰ Menú</button>
-			<a class="navbar-brand mx-auto" href="#">Viveros Acme</a>
-			<div class="dropdown" th:if="${session.rol != 'INVITADO'}">
-				<img src="user.png" alt="Usuario" class="user-img dropdown-toggle"
-					id="userMenuToggle" data-bs-toggle="dropdown" aria-expanded="false">
-				<ul class="dropdown-menu dropdown-menu-end"
-					aria-labelledby="userMenuToggle">
-					<li><a class="dropdown-item" href="#"
-						onclick="logoutAndRedirect()">Cerrar Sesión</a></li>
-				</ul>
-			</div>
-			<div th:if="${session.rol == 'INVITADO'}">
-				<a class="btn btn-light" th:href="@{/login}">Iniciar Sesión</a>
-			</div>
-		</div>
-	</nav>
-	<nav class="sidebar" id="sidebar">
-		<a th:href="@{/inicio}">🏡 Inicio</a> <a th:href="@{/plantasAdmin}"
-			th:if="${session.rol == 'ADMIN'}">🌱 Gestión de Plantas</a> <a
-			th:href="@{/ejemplaresAdmin}"
-			th:if="${session.rol == 'ADMIN' or session.rol == 'PERSONAL'}">🌿
-			Gestión de Ejemplares</a> <a th:href="@{/mensajesAdmin}"
-			th:if="${session.rol == 'ADMIN' or session.rol == 'PERSONAL'}">📩
-			Gestión de Mensajes</a> <a th:href="@{/personaAdmin}"
-			th:if="${session.rol == 'ADMIN'}">👥 Gestión de Personas</a>
-	</nav>
-	<div class="overlay" id="overlay"></div>
-	<main class="container mt-5 main-content">
-		<h2 class="text-center">Gestión de Plantas</h2>
-		<div th:if="${successMessage}"
-			class="alert alert-success text-center fade-message">
-			<span th:text="${successMessage}"></span>
-		</div>
-		<div th:if="${errorMessage}"
-			class="alert alert-danger text-center fade-message">
-			<span th:text="${errorMessage}"></span>
-		</div>
-		<div class="row">
-			<div class="col-md-6 mb-4">
-				<h5 id="tituloFormulario"
-					th:text="${planta.id != null ? 'Editar Planta' : 'Añadir Planta'}"></h5>
-				<div class="form-container">
-					<form th:action="@{/guardarPlanta}" method="post" id="plantaForm">
-						<input type="hidden" th:field="${planta.id}" id="plantaId">
-						<div class="mb-3">
-							<label for="codigo" class="form-label">Código</label> <input
-								type="text" class="form-control" id="codigo" name="codigo"
-								th:field="${planta.codigo}" required pattern="^[A-Za-z]+$"
-								title="Solo letras, sin espacios"
-								th:attr="readonly=${planta.id != null}" />
-						</div>
-						<div class="mb-3">
-							<label for="commonName" class="form-label">Nombre Común</label> <input
-								type="text" class="form-control" id="commonName"
-								name="nombreComun" th:field="${planta.nombreComun}" required
-								pattern="^[A-Za-zÁÉÍÓÚáéíóúñÑ ]+$"
-								title="Solo letras y espacios, sin números ni símbolos" />
-						</div>
-						<div class="mb-3">
-							<label for="scientificName" class="form-label">Nombre
-								Científico</label> <input type="text" class="form-control"
-								id="scientificName" name="nombreCientifico"
-								th:field="${planta.nombreCientifico}" required
-								pattern="^[A-Za-zÁÉÍÓÚáéíóúñÑ ]+$"
-								title="Solo letras y espacios, sin números ni símbolos" />
-						</div>
-						<button type="submit" class="btn btn-primary w-100" id="submitBtn">
-							<span
-								th:text="${planta.id == null ? 'Añadir Planta' : 'Guardar Cambios'}"></span>
-						</button>
-						<button type="button" class="btn btn-secondary w-100 mt-2"
-							onclick="limpiarFormulario()">Nueva Planta</button>
-					</form>
-				</div>
-			</div>
-			<div class="col-md-6 mb-4">
-				<h5>Listado de Plantas</h5>
-				<div class="content-box">
-					<div class="table-responsive">
-						<table class="table table-hover table-striped">
-							<thead>
-								<tr>
-									<th>ID</th>
-									<th>Código</th>
-									<th>Nombre Común</th>
-									<th>Nombre Científico</th>
-									<th>Acción</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr th:each="planta : ${plantas}">
-									<td th:text="${planta.id}"></td>
-									<td th:text="${planta.codigo}"></td>
-									<td th:text="${planta.nombreComun}"></td>
-									<td th:text="${planta.nombreCientifico}"></td>
-									<td>
-										<button type="button" class="btn btn-sm btn-warning edit-btn"
-											th:data-id="${planta.id}" th:data-codigo="${planta.codigo}"
-											th:data-nombre-comun="${planta.nombreComun}"
-											th:data-nombre-cientifico="${planta.nombreCientifico}">
-											Editar</button>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</main>
-	<script>
-    document.getElementById("menuToggle").addEventListener("click", function () {
-      document.getElementById("sidebar").classList.toggle("show");
-      document.getElementById("overlay").classList.toggle("show");
-    });
-    document.getElementById("overlay").addEventListener("click", function () {
-      document.getElementById("sidebar").classList.remove("show");
-      document.getElementById("overlay").classList.remove("show");
-    });
-    document.querySelectorAll(".edit-btn").forEach(button => {
-      button.addEventListener("click", function() {
-        document.getElementById("plantaId").value = this.getAttribute("data-id");
-        document.getElementById("codigo").value = this.getAttribute("data-codigo");
-        document.getElementById("commonName").value = this.getAttribute("data-nombre-comun");
-        document.getElementById("scientificName").value = this.getAttribute("data-nombre-cientifico");
-        document.getElementById("tituloFormulario").innerText = "Editar Planta";
-        document.querySelector("#submitBtn span").innerText = "Guardar Cambios";
-        document.getElementById("codigo").readOnly = true;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Viveros Acme - Gestión de Plantas</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="plantasAdmin.css" />
+  </head>
+  <body data-page="plantas">
+    <nav class="navbar navbar-dark fixed-top">
+      <div
+        class="container-fluid d-flex justify-content-between align-items-center"
+      >
+        <button class="btn btn-outline-light" id="menuToggle">☰ Menú</button>
+        <a class="navbar-brand mx-auto" href="#">Viveros Acme</a>
+        <div class="dropdown" th:if="${session.rol != 'INVITADO'}">
+          <img
+            src="user.png"
+            alt="Usuario"
+            class="user-img dropdown-toggle"
+            id="userMenuToggle"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          />
+          <ul
+            class="dropdown-menu dropdown-menu-end"
+            aria-labelledby="userMenuToggle"
+          >
+            <li>
+              <a class="dropdown-item" href="#" onclick="logoutAndRedirect()"
+                >Cerrar Sesión</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div th:if="${session.rol == 'INVITADO'}">
+          <a class="btn btn-light" th:href="@{/login}">Iniciar Sesión</a>
+        </div>
+      </div>
+    </nav>
+    <nav class="sidebar" id="sidebar">
+      <a th:href="@{/inicio}">🏡 Inicio</a>
+      <a th:href="@{/plantasAdmin}" th:if="${session.rol == 'ADMIN'}"
+        >🌱 Gestión de Plantas</a
+      >
+      <a
+        th:href="@{/ejemplaresAdmin}"
+        th:if="${session.rol == 'ADMIN' or session.rol == 'PERSONAL'}"
+        >🌿 Gestión de Ejemplares</a
+      >
+      <a
+        th:href="@{/mensajesAdmin}"
+        th:if="${session.rol == 'ADMIN' or session.rol == 'PERSONAL'}"
+        >📩 Gestión de Mensajes</a
+      >
+      <a th:href="@{/personaAdmin}" th:if="${session.rol == 'ADMIN'}"
+        >👥 Gestión de Personas</a
+      >
+    </nav>
+    <div class="overlay" id="overlay"></div>
+    <main class="container mt-5 main-content">
+      <h2 class="text-center">Gestión de Plantas</h2>
+      <div
+        th:if="${successMessage}"
+        class="alert alert-success text-center fade-message"
+      >
+        <span th:text="${successMessage}"></span>
+      </div>
+      <div
+        th:if="${errorMessage}"
+        class="alert alert-danger text-center fade-message"
+      >
+        <span th:text="${errorMessage}"></span>
+      </div>
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <h5
+            id="tituloFormulario"
+            th:text="${planta.id != null ? 'Editar Planta' : 'Añadir Planta'}"
+          ></h5>
+          <div class="form-container">
+            <form th:action="@{/guardarPlanta}" method="post" id="plantaForm">
+              <input type="hidden" th:field="${planta.id}" id="plantaId" />
+              <div class="mb-3">
+                <label for="codigo" class="form-label">Código</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="codigo"
+                  name="codigo"
+                  th:field="${planta.codigo}"
+                  required
+                  pattern="^[A-Za-z]+$"
+                  title="Solo letras, sin espacios"
+                  th:attr="readonly=${planta.id != null}"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="commonName" class="form-label">Nombre Común</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="commonName"
+                  name="nombreComun"
+                  th:field="${planta.nombreComun}"
+                  required
+                  pattern="^[A-Za-zÁÉÍÓÚáéíóúñÑ ]+$"
+                  title="Solo letras y espacios, sin números ni símbolos"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="scientificName" class="form-label"
+                  >Nombre Científico</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="scientificName"
+                  name="nombreCientifico"
+                  th:field="${planta.nombreCientifico}"
+                  required
+                  pattern="^[A-Za-zÁÉÍÓÚáéíóúñÑ ]+$"
+                  title="Solo letras y espacios, sin números ni símbolos"
+                />
+              </div>
+              <button
+                type="submit"
+                class="btn btn-primary w-100"
+                id="submitBtn"
+              >
+                <span
+                  th:text="${planta.id == null ? 'Añadir Planta' : 'Guardar Cambios'}"
+                ></span>
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary w-100 mt-2"
+                onclick="limpiarFormulario()"
+              >
+                Nueva Planta
+              </button>
+            </form>
+          </div>
+        </div>
+        <div class="col-md-6 mb-4">
+          <h5>Listado de Plantas</h5>
+          <div class="content-box">
+            <div class="table-responsive">
+              <table class="table table-hover table-striped">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Código</th>
+                    <th>Nombre Común</th>
+                    <th>Nombre Científico</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="planta : ${plantas}">
+                    <td th:text="${planta.id}"></td>
+                    <td th:text="${planta.codigo}"></td>
+                    <td th:text="${planta.nombreComun}"></td>
+                    <td th:text="${planta.nombreCientifico}"></td>
+                    <td>
+                      <button
+                        type="button"
+                        class="btn btn-sm btn-warning edit-btn"
+                        th:data-id="${planta.id}"
+                        th:data-codigo="${planta.codigo}"
+                        th:data-nombre-comun="${planta.nombreComun}"
+                        th:data-nombre-cientifico="${planta.nombreCientifico}"
+                      >
+                        Editar
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+      document
+        .getElementById("menuToggle")
+        .addEventListener("click", function () {
+          document.getElementById("sidebar").classList.toggle("show");
+          document.getElementById("overlay").classList.toggle("show");
+        });
+      document.getElementById("overlay").addEventListener("click", function () {
+        document.getElementById("sidebar").classList.remove("show");
+        document.getElementById("overlay").classList.remove("show");
       });
-    });
-    function limpiarFormulario() {
-      document.getElementById("plantaId").value = "";
-      document.getElementById("codigo").value = "";
-      document.getElementById("commonName").value = "";
-      document.getElementById("scientificName").value = "";
-      document.getElementById("tituloFormulario").innerText = "Añadir Planta";
-      document.querySelector("#submitBtn span").innerText = "Añadir Planta";
-      document.getElementById("codigo").readOnly = false;
-    }
-    function logoutAndRedirect() {
-      fetch('/logout', { method: 'GET' })
-          .then(() => { sessionStorage.clear(); window.location.href = '/inicio'; })
-          .catch(() => { window.location.href = '/inicio'; });
-    }
-  </script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+      document.querySelectorAll(".edit-btn").forEach((button) => {
+        button.addEventListener("click", function () {
+          document.getElementById("plantaId").value =
+            this.getAttribute("data-id");
+          document.getElementById("codigo").value =
+            this.getAttribute("data-codigo");
+          document.getElementById("commonName").value =
+            this.getAttribute("data-nombre-comun");
+          document.getElementById("scientificName").value = this.getAttribute(
+            "data-nombre-cientifico"
+          );
+          document.getElementById("tituloFormulario").innerText =
+            "Editar Planta";
+          document.querySelector("#submitBtn span").innerText =
+            "Guardar Cambios";
+          document.getElementById("codigo").readOnly = true;
+        });
+      });
+      function limpiarFormulario() {
+        document.getElementById("plantaId").value = "";
+        document.getElementById("codigo").value = "";
+        document.getElementById("commonName").value = "";
+        document.getElementById("scientificName").value = "";
+        document.getElementById("tituloFormulario").innerText = "Añadir Planta";
+        document.querySelector("#submitBtn span").innerText = "Añadir Planta";
+        document.getElementById("codigo").readOnly = false;
+      }
+      function logoutAndRedirect() {
+        fetch("/logout", { method: "GET" })
+          .then(() => {
+            sessionStorage.clear();
+            window.location.href = "/inicio";
+          })
+          .catch(() => {
+            window.location.href = "/inicio";
+          });
+      }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

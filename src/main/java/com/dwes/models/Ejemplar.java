@@ -25,7 +25,6 @@ public class Ejemplar {
 	@Transient
 	private LocalDateTime ultimoMensaje;
 
-	// Getters y Setters
 	public Long getId() {
 		return id;
 	}

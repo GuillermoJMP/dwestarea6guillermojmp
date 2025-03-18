@@ -15,7 +15,6 @@ public class Planta {
 
 	private String nombreCientifico;
 
-	// Getters y Setters
 	public Long getId() {
 		return id;
 	}

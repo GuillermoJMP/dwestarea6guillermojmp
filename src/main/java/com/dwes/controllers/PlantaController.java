@@ -35,14 +35,14 @@ public class PlantaController {
 			redirectAttributes.addFlashAttribute("errorMessage", "Acceso denegado. No tienes permisos.");
 			return "redirect:/inicio";
 		}
-		if (planta.getId() != null) { // Modificar: conservar código
+		if (planta.getId() != null) {
 			Optional<Planta> plantaExistenteOpt = plantaService.obtenerPorId(planta.getId());
 			if (plantaExistenteOpt.isEmpty()) {
 				redirectAttributes.addFlashAttribute("errorMessage", "La planta que intentas editar no existe.");
 				return "redirect:/plantasAdmin";
 			}
 			planta.setCodigo(plantaExistenteOpt.get().getCodigo());
-		} else { // Alta: validar y normalizar
+		} else {
 			if (planta.getCodigo().trim().isEmpty() || planta.getNombreComun().trim().isEmpty()
 					|| planta.getNombreCientifico().trim().isEmpty()) {
 				redirectAttributes.addFlashAttribute("errorMessage", "Todos los campos son obligatorios.");

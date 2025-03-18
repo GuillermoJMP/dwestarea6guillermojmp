@@ -17,60 +17,49 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class ConfiguracionSeguridad {
 
-    private final DetallesUsuarioServicio detallesUsuarioServicio;
+	private final DetallesUsuarioServicio detallesUsuarioServicio;
 
-    public ConfiguracionSeguridad(DetallesUsuarioServicio detallesUsuarioServicio) {
-        this.detallesUsuarioServicio = detallesUsuarioServicio;
-    }
+	public ConfiguracionSeguridad(DetallesUsuarioServicio detallesUsuarioServicio) {
+		this.detallesUsuarioServicio = detallesUsuarioServicio;
+	}
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-          .csrf().disable()
-          .authorizeHttpRequests(auth -> auth
-             .requestMatchers("/css/**", "/js/**", "/images/**", "/registroCliente.css").permitAll()
-             .requestMatchers("/inicio", "/verPlantas", "/registroCliente", "/guardarCliente", "/login", "/autenticar").permitAll()
-             .requestMatchers("/plantasAdmin", "/personaAdmin").hasAuthority("ADMIN")
-             .requestMatchers("/ejemplaresAdmin", "/mensajesAdmin", "/stockAdmin").hasAnyAuthority("ADMIN", "PERSONAL")
-             .requestMatchers("/zonaCliente", "/pedidoCliente", "/carrito", "/confirmarPedido", "/misPedidos").hasAuthority("CLIENTE")
-             .anyRequest().authenticated()
-          )
-          .formLogin(form -> form
-              .loginPage("/login")
-              .defaultSuccessUrl("/inicio", true)
-              .permitAll()
-          )
-          .logout(logout -> logout
-              .logoutUrl("/logout")
-              .logoutSuccessUrl("/inicio")
-              .permitAll()
-              .addLogoutHandler((request, response, authentication) -> SecurityContextHolder.clearContext()) // 🔥 Aseguramos limpieza del contexto en logout
-          )
-          .sessionManagement(session -> session
-              .sessionFixation().migrateSession()
-              .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 🔥 Se asegura que la sesión sea mantenida
-          )
-          .authenticationProvider(authenticationProvider());
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http.csrf().disable().authorizeHttpRequests(auth -> auth
+				.requestMatchers("/css/**", "/js/**", "/images/**", "/registroCliente.css").permitAll()
+				.requestMatchers("/inicio", "/verPlantas", "/registroCliente", "/guardarCliente", "/login",
+						"/autenticar")
+				.permitAll().requestMatchers("/plantasAdmin", "/personaAdmin").hasAuthority("ADMIN")
+				.requestMatchers("/ejemplaresAdmin", "/mensajesAdmin", "/stockAdmin")
+				.hasAnyAuthority("ADMIN", "PERSONAL")
+				.requestMatchers("/zonaCliente", "/pedidoCliente", "/carrito", "/confirmarPedido", "/misPedidos")
+				.hasAuthority("CLIENTE").anyRequest().authenticated())
+				.formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/inicio", true).permitAll())
+				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/inicio").permitAll()
+						.addLogoutHandler((request, response, authentication) -> SecurityContextHolder.clearContext()))
+				.sessionManagement(session -> session.sessionFixation().migrateSession()
+						.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+				.authenticationProvider(authenticationProvider());
 
-        return http.build();
-    }
+		return http.build();
+	}
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-            throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+			throws Exception {
+		return authenticationConfiguration.getAuthenticationManager();
+	}
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(detallesUsuarioServicio);
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
+	@Bean
+	public AuthenticationProvider authenticationProvider() {
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+		provider.setUserDetailsService(detallesUsuarioServicio);
+		provider.setPasswordEncoder(passwordEncoder());
+		return provider;
+	}
 }

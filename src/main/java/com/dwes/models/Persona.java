@@ -17,7 +17,6 @@ public class Persona {
 	@Column(nullable = false)
 	private String password;
 
-	// Campos extra para clientes
 	private String fechaNacimiento;
 	private String nifNie;
 	private String direccionEnvio;
@@ -33,7 +32,6 @@ public class Persona {
 		this.password = password;
 	}
 
-	// Getters y Setters
 	public Long getId() {
 		return id;
 	}
