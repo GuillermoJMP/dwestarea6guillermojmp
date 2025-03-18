@@ -7,54 +7,67 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
 import com.dwes.seguridad.DetallesUsuarioServicio;
 
 @Configuration
 public class ConfiguracionSeguridad {
 
-	private final DetallesUsuarioServicio detallesUsuarioServicio;
+    private final DetallesUsuarioServicio detallesUsuarioServicio;
 
-	public ConfiguracionSeguridad(DetallesUsuarioServicio detallesUsuarioServicio) {
-		this.detallesUsuarioServicio = detallesUsuarioServicio;
-	}
+    public ConfiguracionSeguridad(DetallesUsuarioServicio detallesUsuarioServicio) {
+        this.detallesUsuarioServicio = detallesUsuarioServicio;
+    }
 
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeHttpRequests(auth -> auth
-				.requestMatchers("/css/**", "/js/**", "/images/**", "/registroCliente.css").permitAll()
-				.requestMatchers("/inicio", "/verPlantas", "/registroCliente", "/guardarCliente", "/login",
-						"/autenticar")
-				.permitAll().requestMatchers("/plantasAdmin", "/personaAdmin").hasAuthority("ROLE_ADMIN")
-				.requestMatchers("/ejemplaresAdmin", "/mensajesAdmin", "/stockAdmin")
-				.hasAnyAuthority("ROLE_ADMIN", "ROLE_PERSONAL")
-				.requestMatchers("/zonaCliente", "/pedidoCliente", "/carrito", "/confirmarPedido", "/misPedidos")
-				.hasAuthority("ROLE_CLIENTE").anyRequest().authenticated())
-				.formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/inicio", true).permitAll())
-				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/inicio").permitAll())
-				.authenticationProvider(authenticationProvider());
-		return http.build();
-	}
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+          .csrf().disable()
+          .authorizeHttpRequests(auth -> auth
+             .requestMatchers("/css/**", "/js/**", "/images/**", "/registroCliente.css").permitAll()
+             .requestMatchers("/inicio", "/verPlantas", "/registroCliente", "/guardarCliente", "/login", "/autenticar").permitAll()
+             .requestMatchers("/plantasAdmin", "/personaAdmin").hasAuthority("ADMIN") // 🔥 Sin "ROLE_"
+             .requestMatchers("/ejemplaresAdmin", "/mensajesAdmin", "/stockAdmin").hasAnyAuthority("ADMIN", "PERSONAL") // 🔥 Sin "ROLE_"
+             .requestMatchers("/zonaCliente", "/pedidoCliente", "/carrito", "/confirmarPedido", "/misPedidos").hasAuthority("CLIENTE") // 🔥 Sin "ROLE_"
+             .anyRequest().authenticated()
+          )
+          .formLogin(form -> form
+              .loginPage("/login")
+              .defaultSuccessUrl("/inicio", true)
+              .permitAll()
+          )
+          .logout(logout -> logout
+              .logoutUrl("/logout")
+              .logoutSuccessUrl("/inicio")
+              .permitAll()
+          )
+          .sessionManagement(session -> session
+              .sessionFixation().migrateSession()
+              .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+          )
+          .authenticationProvider(authenticationProvider());
+        return http.build();
+    }
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-			throws Exception {
-		return authenticationConfiguration.getAuthenticationManager();
-	}
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
-	@Bean
-	public AuthenticationProvider authenticationProvider() {
-		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-		provider.setUserDetailsService(detallesUsuarioServicio);
-		provider.setPasswordEncoder(passwordEncoder());
-		return provider;
-	}
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(detallesUsuarioServicio);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
 }
