@@ -50,15 +50,16 @@ public class CredencialesController {
 			return "redirect:/login?error=credencialesInvalidas";
 		}
 		Credenciales credenciales = credencialesOpt.get();
-		// Se espera que en la DB se guarde "ADMIN", "PERSONAL" o "CLIENTE" sin prefijo.
 		String rol = credenciales.getRol();
 
-		// Para la autenticación en Spring Security usamos el valor tal cual.
-		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(usuario, password,
+		System.out.println("Usuario autenticado: " + usuario + ", Rol: " + rol);
+
+		// 🔥 Establecemos manualmente el contexto de seguridad
+		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(usuario, null,
 				AuthorityUtils.createAuthorityList(rol));
 		SecurityContextHolder.getContext().setAuthentication(auth);
+		session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext()); // 🔥 Guardamos en sesión
 
-		// Guardamos en sesión los datos sin prefijo (ya vienen sin él)
 		session.setAttribute("usuarioLogeado", usuario);
 		session.setAttribute("rol", rol);
 
@@ -68,9 +69,13 @@ public class CredencialesController {
 		}
 		session.setAttribute("usuarioId", persona.getId());
 
+		System.out.println("Sesión creada - Usuario: " + session.getAttribute("usuarioLogeado") + ", Rol: "
+				+ session.getAttribute("rol"));
+
 		if ("CLIENTE".equals(rol)) {
 			return "redirect:/zonaCliente";
 		}
 		return "redirect:/inicio";
 	}
+
 }

@@ -1,5 +1,6 @@
 package com.dwes.configuracion;
 
+import com.dwes.seguridad.DetallesUsuarioServicio;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,10 +9,10 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import com.dwes.seguridad.DetallesUsuarioServicio;
 
 @Configuration
 public class ConfiguracionSeguridad {
@@ -29,9 +30,9 @@ public class ConfiguracionSeguridad {
           .authorizeHttpRequests(auth -> auth
              .requestMatchers("/css/**", "/js/**", "/images/**", "/registroCliente.css").permitAll()
              .requestMatchers("/inicio", "/verPlantas", "/registroCliente", "/guardarCliente", "/login", "/autenticar").permitAll()
-             .requestMatchers("/plantasAdmin", "/personaAdmin").hasAuthority("ADMIN") // 🔥 Sin "ROLE_"
-             .requestMatchers("/ejemplaresAdmin", "/mensajesAdmin", "/stockAdmin").hasAnyAuthority("ADMIN", "PERSONAL") // 🔥 Sin "ROLE_"
-             .requestMatchers("/zonaCliente", "/pedidoCliente", "/carrito", "/confirmarPedido", "/misPedidos").hasAuthority("CLIENTE") // 🔥 Sin "ROLE_"
+             .requestMatchers("/plantasAdmin", "/personaAdmin").hasAuthority("ADMIN")
+             .requestMatchers("/ejemplaresAdmin", "/mensajesAdmin", "/stockAdmin").hasAnyAuthority("ADMIN", "PERSONAL")
+             .requestMatchers("/zonaCliente", "/pedidoCliente", "/carrito", "/confirmarPedido", "/misPedidos").hasAuthority("CLIENTE")
              .anyRequest().authenticated()
           )
           .formLogin(form -> form
@@ -43,12 +44,14 @@ public class ConfiguracionSeguridad {
               .logoutUrl("/logout")
               .logoutSuccessUrl("/inicio")
               .permitAll()
+              .addLogoutHandler((request, response, authentication) -> SecurityContextHolder.clearContext()) // 🔥 Aseguramos limpieza del contexto en logout
           )
           .sessionManagement(session -> session
               .sessionFixation().migrateSession()
-              .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+              .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 🔥 Se asegura que la sesión sea mantenida
           )
           .authenticationProvider(authenticationProvider());
+
         return http.build();
     }
 

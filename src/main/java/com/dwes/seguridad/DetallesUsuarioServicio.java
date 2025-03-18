@@ -25,12 +25,14 @@ public class DetallesUsuarioServicio implements UserDetailsService {
 			throw new UsernameNotFoundException("Usuario no encontrado");
 		}
 
-		// 🔥 Importante: Usamos el rol tal cual SIN agregar "ROLE_"
+		// 🔥 Verificación del rol asignado
+		System.out.println("Usuario autenticado: " + credenciales.getUsuario() + ", Rol asignado: " + credenciales.getRol());
+
 		return new User(
 				credenciales.getUsuario(), 
 				credenciales.getPassword(), 
 				Collections.singletonList(
-					new org.springframework.security.core.authority.SimpleGrantedAuthority(credenciales.getRol())
+					new org.springframework.security.core.authority.SimpleGrantedAuthority(credenciales.getRol()) // 🔥 Usamos el rol sin "ROLE_"
 				)
 		);
 	}
