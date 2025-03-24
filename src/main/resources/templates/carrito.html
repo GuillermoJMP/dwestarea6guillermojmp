@@ -12,16 +12,42 @@
       href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="carrito.css" />
+    <link rel="stylesheet" href="css/carrito.css" />
   </head>
   <body data-page="cliente">
     <nav class="navbar navbar-dark fixed-top">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">Viveros Acme - Cliente</a>
-        <button class="btn btn-outline-light" onclick="logoutAndRedirect()">
-          Cerrar Sesión
-        </button>
+      <div
+        class="container-fluid d-flex justify-content-between align-items-center"
+      >
+        <button class="btn btn-outline-light" id="menuToggle">☰ Menú</button>
+        <a class="navbar-brand mx-auto" href="#">Viveros Acme - Cliente</a>
+        <div class="dropdown">
+          <img
+            src="images/user.png"
+            alt="Usuario"
+            class="user-img dropdown-toggle"
+            id="userMenuToggle"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          />
+          <ul
+            class="dropdown-menu dropdown-menu-end"
+            aria-labelledby="userMenuToggle"
+          >
+            <li>
+              <a class="dropdown-item" href="#" onclick="logoutAndRedirect()"
+                >Cerrar Sesión</a
+              >
+            </li>
+          </ul>
+        </div>
       </div>
+    </nav>
+    <nav class="sidebar" id="sidebar">
+      <a th:href="@{/zonaCliente}">🏠 Inicio Cliente</a>
+      <a th:href="@{/pedidoCliente}">🛒 Realizar Pedido</a>
+      <a th:href="@{/carrito}">🛍️ Carrito</a>
+      <a th:href="@{/misPedidos}">📄 Mis Pedidos</a>
     </nav>
     <div class="container mt-5">
       <h2 class="text-center">Carrito de Pedidos</h2>

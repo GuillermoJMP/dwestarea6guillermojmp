@@ -12,15 +12,35 @@
       href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="pedidoCliente.css" />
+    <link rel="stylesheet" href="css/pedidoCliente.css" />
   </head>
   <body data-page="cliente">
     <nav class="navbar navbar-dark fixed-top">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">Viveros Acme - Cliente</a>
-        <button class="btn btn-outline-light" onclick="logoutAndRedirect()">
-          Cerrar Sesión
-        </button>
+      <div
+        class="container-fluid d-flex justify-content-between align-items-center"
+      >
+        <button class="btn btn-outline-light" id="menuToggle">☰ Menú</button>
+        <a class="navbar-brand mx-auto" href="#">Viveros Acme - Cliente</a>
+        <div class="dropdown">
+          <img
+            src="images/user.png"
+            alt="Usuario"
+            class="user-img dropdown-toggle"
+            id="userMenuToggle"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          />
+          <ul
+            class="dropdown-menu dropdown-menu-end"
+            aria-labelledby="userMenuToggle"
+          >
+            <li>
+              <a class="dropdown-item" href="#" onclick="logoutAndRedirect()"
+                >Cerrar Sesión</a
+              >
+            </li>
+          </ul>
+        </div>
       </div>
     </nav>
     <nav class="sidebar" id="sidebar">
@@ -35,7 +55,6 @@
       <p class="text-center">
         Seleccione un ejemplar de cada tipo de planta disponible:
       </p>
-      <!-- Se asume que el controlador envía la lista "plantas" y "ejemplares" -->
       <div th:each="planta : ${plantas}">
         <h5 th:text="${planta.nombreComun}"></h5>
         <p>

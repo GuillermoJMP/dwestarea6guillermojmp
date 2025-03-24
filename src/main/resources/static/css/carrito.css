@@ -1,0 +1,124 @@
+/* pedidoCliente.css */
+* {
+  font-family: "Patrick Hand", cursive;
+}
+
+body {
+  background-color: #d9ecbf;
+  color: #3f4a4e;
+}
+
+/* Navbar */
+.navbar {
+  background-color: #3f4a4e;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  left: -270px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 270px;
+  height: 60%;
+  background-color: #3f4a4e;
+  transition: left 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.sidebar.show {
+  left: 10px;
+}
+
+.sidebar a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  padding: 15px 20px;
+  font-size: 18px;
+  width: 80%;
+  text-align: center;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  background-color: #638869;
+  transition: all 0.3s;
+}
+
+.sidebar a:hover {
+  background-color: #7fa983;
+  transform: scale(1.05);
+}
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  z-index: 500;
+}
+
+.overlay.show {
+  display: block;
+}
+
+/* Contenedor principal */
+.container {
+  padding-top: 80px;
+  margin-bottom: 20px;
+}
+
+/* Títulos y textos */
+h2,
+h5 {
+  color: #3f4a4e;
+}
+
+/* Formularios y botones */
+.form-container form {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  color: #3f4a4e;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+/* Botón para añadir ejemplar */
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+/* Botón primario */
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0069d9;
+  border-color: #0062cc;
+}
+
+/* Tabla responsiva */
+.table-responsive {
+  background: white;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 20px;
+}

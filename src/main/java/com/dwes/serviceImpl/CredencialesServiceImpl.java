@@ -49,7 +49,7 @@ public class CredencialesServiceImpl implements CredencialesService {
 		if (personaRepository.findByUsuario("admin") == null) {
 			Persona adminPersona = new Persona();
 			adminPersona.setNombre("Administrador");
-			adminPersona.setEmail("admin@tuapp.com");
+			adminPersona.setEmail("admin@admin.com");
 			adminPersona.setUsuario("admin");
 			adminPersona.setPassword(passwordEncoder.encode("admin"));
 			personaRepository.save(adminPersona);
