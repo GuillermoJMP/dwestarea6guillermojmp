@@ -1,4 +1,4 @@
-/* pedidoCliente.css */
+/* carrito.css */
 * {
   font-family: "Patrick Hand", cursive;
 }
@@ -8,12 +8,18 @@ body {
   color: #3f4a4e;
 }
 
-/* Navbar */
 .navbar {
   background-color: #3f4a4e;
 }
 
-/* Sidebar */
+.user-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #d3ac47;
+  cursor: pointer;
+}
+
 .sidebar {
   position: fixed;
   left: -270px;
@@ -46,8 +52,8 @@ body {
   text-align: center;
   border-radius: 5px;
   margin-bottom: 10px;
-  background-color: #638869;
   transition: all 0.3s;
+  background-color: #638869;
 }
 
 .sidebar a:hover {
@@ -55,7 +61,6 @@ body {
   transform: scale(1.05);
 }
 
-/* Overlay */
 .overlay {
   position: fixed;
   top: 0;
@@ -71,37 +76,32 @@ body {
   display: block;
 }
 
+.main-content {
+  padding: 80px 20px;
+}
+
 /* Contenedor principal */
 .container {
   padding-top: 80px;
   margin-bottom: 20px;
 }
 
-/* Títulos y textos */
-h2,
-h5 {
+/* Títulos */
+h2 {
   color: #3f4a4e;
 }
 
-/* Formularios y botones */
-.form-container form {
+/* Alertas */
+.alert {
+  margin-top: 20px;
+}
+
+/* Tabla */
+.table-responsive {
   background: white;
-  padding: 20px;
-  border-radius: 10px;
-  color: #3f4a4e;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-}
-
-/* Botón para añadir ejemplar */
-.btn-success {
-  background-color: #28a745;
-  border-color: #28a745;
-}
-
-.btn-success:hover {
-  background-color: #218838;
-  border-color: #1e7e34;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 20px;
 }
 
 /* Botón primario */
@@ -113,12 +113,4 @@ h5 {
 .btn-primary:hover {
   background-color: #0069d9;
   border-color: #0062cc;
-}
-
-/* Tabla responsiva */
-.table-responsive {
-  background: white;
-  border-radius: 5px;
-  padding: 10px;
-  margin-top: 20px;
 }

@@ -47,8 +47,8 @@
       <a th:href="@{/zonaCliente}">🏠 Inicio Cliente</a>
       <a th:href="@{/pedidoCliente}">🛒 Realizar Pedido</a>
       <a th:href="@{/carrito}">🛍️ Carrito</a>
-      <a th:href="@{/misPedidos}">📄 Mis Pedidos</a>
     </nav>
+    <div class="overlay" id="overlay"></div>
     <div class="container mt-5">
       <h2 class="text-center">Carrito de Pedidos</h2>
       <div th:if="${successMessage}" class="alert alert-success text-center">
@@ -80,6 +80,16 @@
       </form>
     </div>
     <script>
+      document
+        .getElementById("menuToggle")
+        .addEventListener("click", function () {
+          document.getElementById("sidebar").classList.toggle("show");
+          document.getElementById("overlay").classList.toggle("show");
+        });
+      document.getElementById("overlay").addEventListener("click", function () {
+        document.getElementById("sidebar").classList.remove("show");
+        document.getElementById("overlay").classList.remove("show");
+      });
       function logoutAndRedirect() {
         fetch("/logout", { method: "GET" })
           .then(() => {

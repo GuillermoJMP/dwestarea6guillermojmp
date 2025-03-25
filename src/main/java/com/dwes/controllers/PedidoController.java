@@ -3,9 +3,12 @@ package com.dwes.controllers;
 import com.dwes.models.Ejemplar;
 import com.dwes.models.Pedido;
 import com.dwes.models.Persona;
+import com.dwes.models.Planta;
 import com.dwes.services.EjemplarService;
 import com.dwes.services.PedidoService;
 import com.dwes.services.PersonaService;
+import com.dwes.services.PlantaService;
+
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,6 +30,9 @@ public class PedidoController {
 
 	@Autowired
 	private PersonaService personaService;
+	
+	@Autowired
+	private PlantaService plantaService;
 
 	@GetMapping("/carrito")
 	public String mostrarCarrito(HttpSession session, Model model) {
@@ -87,4 +93,7 @@ public class PedidoController {
 		redirectAttributes.addFlashAttribute("successMessage", "Pedido confirmado correctamente.");
 		return "redirect:/zonaCliente";
 	}
+	
+
+
 }
