@@ -12,7 +12,7 @@
       href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" th:href="css/mensajesAdmin.css" />
+    <link rel="stylesheet" href="css/mensajesAdministrador.css" />
     <style>
       .table-responsive {
         max-height: 300px;
@@ -117,20 +117,20 @@
           </form>
         </div>
         <div class="col-md-4">
-          <h5>Filtrar por Ejemplar</h5>
+          <h5>Filtrar por Usuario</h5>
           <form method="get" action="/mensajesAdmin">
             <div class="input-group mb-3">
               <select
-                name="ejemplarId"
+                name="personaId"
                 class="form-select"
                 onchange="this.form.submit()"
               >
-                <option value="">Mostrar Solo Ejemplares con Mensajes</option>
+                <option value="">Mostrar Todos</option>
                 <option
-                  th:each="ejemplar : ${ejemplares}"
-                  th:value="${ejemplar.id}"
-                  th:text="${ejemplar.nombre}"
-                  th:selected="${ejemplar.id == ejemplarId}"
+                  th:each="persona : ${personas}"
+                  th:value="${persona.id}"
+                  th:text="${persona.nombre}"
+                  th:selected="${persona.id == personaId}"
                 ></option>
               </select>
             </div>

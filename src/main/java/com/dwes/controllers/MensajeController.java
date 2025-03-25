@@ -35,8 +35,7 @@ public class MensajeController {
 	private PlantaService plantaService;
 
 	@GetMapping("/mensajesAdmin")
-	public String listar(@RequestParam(required = false) Long ejemplarId,
-			@RequestParam(required = false) Long personaId, @RequestParam(required = false) String inicio,
+	public String listar(@RequestParam(required = false) Long personaId, @RequestParam(required = false) String inicio,
 			@RequestParam(required = false) String fin, @RequestParam(required = false) Long plantaFiltro, Model model,
 			HttpSession session, RedirectAttributes redirectAttributes) {
 
@@ -49,8 +48,6 @@ public class MensajeController {
 		try {
 			if (plantaFiltro != null) {
 				mensajes = mensajeService.buscarPorPlanta(plantaFiltro);
-			} else if (ejemplarId != null) {
-				mensajes = mensajeService.buscarPorEjemplar(ejemplarId);
 			} else if (personaId != null) {
 				mensajes = mensajeService.buscarPorPersona(personaId);
 			} else if (inicio != null && fin != null && !inicio.isEmpty() && !fin.isEmpty()) {
@@ -64,6 +61,7 @@ public class MensajeController {
 			redirectAttributes.addFlashAttribute("errorMessage", "Error al filtrar mensajes.");
 			return "redirect:/mensajesAdmin";
 		}
+		// Conservamos la lista de ejemplares para otros propósitos (si fuera necesario)
 		List<Ejemplar> ejemplaresConMensajes = ejemplarService.listarTodos().stream()
 				.filter(e -> mensajeService.buscarPorEjemplar(e.getId()).size() > 0).collect(Collectors.toList());
 		model.addAttribute("mensajes", mensajes);
