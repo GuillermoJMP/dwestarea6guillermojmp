@@ -203,7 +203,7 @@
                   <th>Fecha</th>
                   <th>Mensaje</th>
                   <th>Usuario</th>
-                  <th>Planta</th>
+                  <th>Ejemplar</th>
                 </tr>
               </thead>
               <tbody>
@@ -218,7 +218,9 @@
                   ></td>
                   <td th:text="${mensaje.mensaje}"></td>
                   <td th:text="${mensaje.persona.nombre}"></td>
-                  <td th:text="${mensaje.ejemplar.planta.nombreComun}"></td>
+                  <td
+                    th:text="${mensaje.ejemplar != null ? mensaje.ejemplar.nombre : 'Sin ejemplar'}"
+                  ></td>
                 </tr>
               </tbody>
             </table>

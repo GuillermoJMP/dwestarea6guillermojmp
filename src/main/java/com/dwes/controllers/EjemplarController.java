@@ -92,10 +92,11 @@ public class EjemplarController {
 			Persona personaLogeada = personaService.obtenerPorId((Long) session.getAttribute("usuarioId"));
 			Mensaje mensajeInicial = new Mensaje();
 			mensajeInicial.setEjemplar(ejemplar);
-			mensajeInicial.setMensaje("Ejemplar creado por " + usuarioLogeado);
+			mensajeInicial.setMensaje("Ejemplar " + ejemplar.getNombre() + " creado por " + usuarioLogeado);
 			mensajeInicial.setFechaHora(LocalDateTime.now());
-			mensajeInicial.setPersona(personaLogeada);
+			mensajeInicial.setPersona(personaLogeada);  
 			mensajeService.guardar(mensajeInicial);
+
 
 			redirectAttributes.addFlashAttribute("successMessage", "Ejemplar registrado correctamente.");
 		} else {
