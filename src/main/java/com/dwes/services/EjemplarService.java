@@ -14,7 +14,12 @@ public interface EjemplarService {
 
 	List<Ejemplar> filtrarPorPlanta(Long plantaId);
 
+	List<Ejemplar> filtrarPorPlantas(List<Long> plantaIds);
+
 	int contarMensajesPorEjemplar(Long ejemplarId);
 
 	LocalDateTime obtenerUltimaFechaMensaje(Long ejemplarId);
+	
+	int contarEjemplaresPorPlanta(Long plantaId);
+
 }

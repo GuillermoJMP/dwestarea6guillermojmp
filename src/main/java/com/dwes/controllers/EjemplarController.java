@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,22 +35,40 @@ public class EjemplarController {
 	private PersonaService personaService;
 
 	@GetMapping("/ejemplaresAdmin")
-	public String listar(Model model, @RequestParam(required = false) Long plantaId, HttpSession session,
+	public String listar(Model model, @RequestParam(required = false) List<Long> plantaIds, HttpSession session,
 			RedirectAttributes redirectAttributes) {
 		String rol = (String) session.getAttribute("rol");
 		if (rol == null || (!rol.equals("ADMIN") && !rol.equals("PERSONAL"))) {
 			redirectAttributes.addFlashAttribute("errorMessage", "Acceso denegado. No tienes permisos.");
 			return "redirect:/inicio";
 		}
-		List<Ejemplar> ejemplares = (plantaId == null) ? ejemplarService.listarTodos()
-				: ejemplarService.filtrarPorPlanta(plantaId);
-		for (Ejemplar ejemplar : ejemplares) {
-			ejemplar.setNumeroMensajes(ejemplarService.contarMensajesPorEjemplar(ejemplar.getId()));
-			ejemplar.setUltimoMensaje(ejemplarService.obtenerUltimaFechaMensaje(ejemplar.getId()));
+		List<Planta> todasPlantas = plantaService.listarTodas();
+
+		List<Planta> plantasConEjemplares = new ArrayList<>();
+		for (Planta p : todasPlantas) {
+			int count = ejemplarService.filtrarPorPlanta(p.getId()).size();
+			if (count > 0) {
+				plantasConEjemplares.add(p);
+			}
 		}
-		model.addAttribute("plantas", plantaService.listarTodas());
+
+		List<Ejemplar> ejemplares;
+		if (plantaIds == null || plantaIds.isEmpty()) {
+			ejemplares = ejemplarService.listarTodos();
+		} else {
+			ejemplares = ejemplarService.filtrarPorPlantas(plantaIds);
+		}
+
+		for (Ejemplar e : ejemplares) {
+			e.setNumeroMensajes(ejemplarService.contarMensajesPorEjemplar(e.getId()));
+			e.setUltimoMensaje(ejemplarService.obtenerUltimaFechaMensaje(e.getId()));
+		}
+
+		model.addAttribute("plantasFiltrables", plantasConEjemplares);
+		model.addAttribute("plantas", todasPlantas);
+
 		model.addAttribute("ejemplares", ejemplares);
-		model.addAttribute("plantaSeleccionada", plantaId);
+		model.addAttribute("plantaSeleccionadas", plantaIds);
 		return "ejemplaresAdmin";
 	}
 
@@ -66,7 +85,8 @@ public class EjemplarController {
 			Ejemplar ejemplar = new Ejemplar();
 			ejemplar.setPlanta(selectedPlanta);
 			ejemplar = ejemplarService.guardar(ejemplar);
-			ejemplar.setNombre(selectedPlanta.getCodigo() + "_" + ejemplar.getId());
+			int count = ejemplarService.contarEjemplaresPorPlanta(planta);
+			ejemplar.setNombre(selectedPlanta.getCodigo() + "_" + count);
 			ejemplar = ejemplarService.guardar(ejemplar);
 			String usuarioLogeado = (String) session.getAttribute("usuarioLogeado");
 			Persona personaLogeada = personaService.obtenerPorId((Long) session.getAttribute("usuarioId"));
@@ -76,6 +96,7 @@ public class EjemplarController {
 			mensajeInicial.setFechaHora(LocalDateTime.now());
 			mensajeInicial.setPersona(personaLogeada);
 			mensajeService.guardar(mensajeInicial);
+
 			redirectAttributes.addFlashAttribute("successMessage", "Ejemplar registrado correctamente.");
 		} else {
 			redirectAttributes.addFlashAttribute("errorMessage", "Error al registrar el ejemplar.");
@@ -83,26 +104,4 @@ public class EjemplarController {
 		return "redirect:/ejemplaresAdmin";
 	}
 
-	@PostMapping("/modificarEjemplar")
-	public String modificarEjemplar(@RequestParam Long ejemplarId, @RequestParam Long nuevaPlantaId,
-			RedirectAttributes redirectAttributes, HttpSession session) {
-		String rol = (String) session.getAttribute("rol");
-		if (rol == null || (!rol.equals("ADMIN") && !rol.equals("PERSONAL"))) {
-			redirectAttributes.addFlashAttribute("errorMessage", "Acceso denegado. No tienes permisos.");
-			return "redirect:/inicio";
-		}
-		Optional<Ejemplar> ejemplarOpt = ejemplarService.obtenerPorId(ejemplarId);
-		Optional<Planta> plantaOpt = plantaService.obtenerPorId(nuevaPlantaId);
-		if (ejemplarOpt.isPresent() && plantaOpt.isPresent()) {
-			Ejemplar ejemplar = ejemplarOpt.get();
-			Planta nuevaPlanta = plantaOpt.get();
-			ejemplar.setPlanta(nuevaPlanta);
-			ejemplar.setNombre(nuevaPlanta.getCodigo() + "_" + ejemplar.getId());
-			ejemplarService.guardar(ejemplar);
-			redirectAttributes.addFlashAttribute("successMessage", "Ejemplar modificado correctamente.");
-		} else {
-			redirectAttributes.addFlashAttribute("errorMessage", "Error al modificar el ejemplar.");
-		}
-		return "redirect:/ejemplaresAdmin";
-	}
 }

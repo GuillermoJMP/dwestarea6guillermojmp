@@ -12,7 +12,7 @@
       href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/ejemplaresAdmin.css" />
+    <link rel="stylesheet" th:href="@{/css/ejemplaresAdmin.css}" />
   </head>
   <body data-page="ejemplares">
     <nav class="navbar navbar-dark fixed-top">
@@ -78,21 +78,50 @@
         <div class="col-md-6">
           <h5>Filtrar Ejemplares</h5>
           <form method="get" action="/ejemplaresAdmin">
-            <div class="input-group mb-3">
-              <select
-                name="plantaId"
-                class="form-select"
-                onchange="this.form.submit()"
+            <div
+              class="mb-3"
+              style="background-color: #fff; padding: 10px; border-radius: 5px"
+            >
+              <div
+                th:if="${plantasFiltrables == null or #lists.isEmpty(plantasFiltrables)}"
               >
-                <option value="">Mostrar Todos</option>
-                <option
-                  th:each="planta : ${plantas}"
-                  th:value="${planta.id}"
-                  th:text="${planta.nombreComun}"
-                  th:selected="${planta.id == plantaSeleccionada}"
-                ></option>
-              </select>
+                <p class="text-muted" style="font-size: 14px">
+                  No hay ejemplares disponibles para filtrar.
+                </p>
+              </div>
+              <div
+                th:if="${plantasFiltrables != null and !#lists.isEmpty(plantasFiltrables)}"
+              >
+                <div
+                  class="form-check mb-2"
+                  th:each="planta : ${plantasFiltrables}"
+                >
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="plantaIds"
+                    th:value="${planta.id}"
+                    th:checked="${plantaSeleccionadas != null and #lists.contains(plantaSeleccionadas, planta.id)}"
+                    th:id="|plantaCheck__${planta.id}|"
+                  />
+                  <label
+                    class="form-check-label"
+                    th:for="|plantaCheck__${planta.id}|"
+                    th:text="${planta.nombreComun}"
+                  >
+                  </label>
+                </div>
+              </div>
+              <p class="text-muted" style="font-size: 14px">
+                <i
+                  >Marca las plantas que desees filtrar o deja sin marcar para
+                  mostrar todas.</i
+                >
+              </p>
             </div>
+            <button type="submit" class="btn btn-outline-secondary">
+              Filtrar
+            </button>
           </form>
         </div>
         <div
@@ -136,7 +165,6 @@
                 <th>Tipo de Planta</th>
                 <th># Mensajes</th>
                 <th>Último Mensaje</th>
-                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -148,111 +176,47 @@
                 <td
                   th:text="${#temporals.format(ejemplar.ultimoMensaje, 'dd/MM/yyyy HH:mm')}"
                 ></td>
-                <td>
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-warning modify-btn"
-                    th:data-id="${ejemplar.id}"
-                  >
-                    Modificar
-                  </button>
-                </td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
     </main>
-    <!-- Modal para modificar ejemplar -->
-    <div
-      class="modal fade"
-      id="modificarModal"
-      tabindex="-1"
-      aria-labelledby="modificarModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <form th:action="@{/modificarEjemplar}" method="post">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modificarModalLabel">
-                Modificar Ejemplar
-              </h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Cerrar"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <input type="hidden" id="modEjemplarId" name="ejemplarId" />
-              <div class="mb-3">
-                <label for="nuevaPlantaSelect" class="form-label"
-                  >Seleccione Nueva Planta:</label
-                >
-                <select
-                  id="nuevaPlantaSelect"
-                  name="nuevaPlantaId"
-                  class="form-select"
-                  required
-                >
-                  <option value="">-- Seleccione una planta --</option>
-                  <option
-                    th:each="planta : ${plantas}"
-                    th:value="${planta.id}"
-                    th:text="${planta.nombreComun}"
-                  ></option>
-                </select>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Cancelar
-              </button>
-              <button type="submit" class="btn btn-primary">
-                Guardar Cambios
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
     <script>
-      document
-        .getElementById("menuToggle")
-        .addEventListener("click", function () {
-          document.getElementById("sidebar").classList.toggle("show");
-          document.getElementById("overlay").classList.toggle("show");
+      document.addEventListener("DOMContentLoaded", function () {
+        const menuToggle = document.getElementById("menuToggle");
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("overlay");
+
+        menuToggle.addEventListener("click", function () {
+          sidebar.classList.toggle("show");
+          overlay.classList.toggle("show");
         });
-      document.getElementById("overlay").addEventListener("click", function () {
-        document.getElementById("sidebar").classList.remove("show");
-        document.getElementById("overlay").classList.remove("show");
-      });
-      document.querySelectorAll(".modify-btn").forEach((button) => {
-        button.addEventListener("click", function () {
-          let ejemplarId = this.getAttribute("data-id");
-          document.getElementById("modEjemplarId").value = ejemplarId;
-          let modal = new bootstrap.Modal(
-            document.getElementById("modificarModal")
-          );
-          modal.show();
+        overlay.addEventListener("click", function () {
+          sidebar.classList.remove("show");
+          overlay.classList.remove("show");
         });
-      });
-      function logoutAndRedirect() {
-        fetch("/logout", { method: "GET" })
-          .then(() => {
-            sessionStorage.clear();
-            window.location.href = "/inicio";
-          })
-          .catch(() => {
-            window.location.href = "/inicio";
+        document.querySelectorAll(".modify-btn").forEach((button) => {
+          button.addEventListener("click", function () {
+            const ejemplarId = this.getAttribute("data-id");
+            document.getElementById("modEjemplarId").value = ejemplarId;
+            const modal = new bootstrap.Modal(
+              document.getElementById("modificarModal")
+            );
+            modal.show();
           });
-      }
+        });
+        function logoutAndRedirect() {
+          fetch("/logout", { method: "GET" })
+            .then(() => {
+              window.location.href = "/inicio";
+            })
+            .catch(() => {
+              window.location.href = "/inicio";
+            });
+        }
+        window.logoutAndRedirect = logoutAndRedirect;
+      });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </body>

@@ -7,5 +7,7 @@ import java.util.List;
 
 @Repository
 public interface EjemplarRepository extends JpaRepository<Ejemplar, Long> {
-	List<Ejemplar> findByPlantaId(Long plantaId);
+    List<Ejemplar> findByPlantaId(Long plantaId);
+    List<Ejemplar> findByPlantaIdIn(List<Long> plantaIds);
+    int countByPlantaId(Long plantaId);
 }
