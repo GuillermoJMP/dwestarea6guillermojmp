@@ -162,14 +162,17 @@
       <div class="row">
         <div class="col-md-6">
           <h5>Añadir Mensaje</h5>
-          <form th:action="@{/guardarMensaje}" method="post" id="mensajeForm">
+          <form
+            th:object="${mensaje}"
+            th:action="@{/guardarMensaje}"
+            method="post"
+          >
             <div class="mb-3">
               <label for="ejemplarSelect" class="form-label">Ejemplar</label>
               <select
                 id="ejemplarSelect"
-                name="ejemplarId"
                 class="form-select"
-                required
+                th:field="*{ejemplar.id}"
               >
                 <option value="">Seleccione un ejemplar</option>
                 <option
@@ -178,15 +181,24 @@
                   th:text="${ejemplar.nombre}"
                 ></option>
               </select>
+              <div
+                class="text-danger"
+                th:if="${#fields.hasErrors('ejemplar.id')}"
+                th:errors="*{ejemplar.id}"
+              ></div>
             </div>
             <div class="mb-3">
               <label for="mensaje" class="form-label">Mensaje</label>
               <textarea
                 id="mensaje"
-                name="anotacion"
                 class="form-control"
-                required
+                th:field="*{mensaje}"
               ></textarea>
+              <div
+                class="text-danger"
+                th:if="${#fields.hasErrors('mensaje')}"
+                th:errors="*{mensaje}"
+              ></div>
             </div>
             <button type="submit" class="btn btn-primary w-100">Guardar</button>
           </form>
@@ -239,24 +251,6 @@
         document.getElementById("sidebar").classList.remove("show");
         document.getElementById("overlay").classList.remove("show");
       });
-      document
-        .getElementById("mensajeForm")
-        .addEventListener("submit", function (event) {
-          let mensaje = document.getElementById("mensaje").value.trim();
-          let ejemplarSelect = document.getElementById("ejemplarSelect").value;
-          if (mensaje === "") {
-            alert("El mensaje no puede estar vacío.");
-            event.preventDefault();
-          }
-          if (ejemplarSelect === "") {
-            alert("Debes seleccionar un ejemplar.");
-            event.preventDefault();
-          }
-        });
-      setTimeout(() => {
-        let alerts = document.querySelectorAll(".alert");
-        alerts.forEach((alert) => alert.classList.add("fade"));
-      }, 5000);
       function logoutAndRedirect() {
         fetch("/logout", { method: "GET" })
           .then(() => {

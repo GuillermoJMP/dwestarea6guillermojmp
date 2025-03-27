@@ -1,22 +1,25 @@
 package com.dwes.controllers;
 
+import com.dwes.models.Ejemplar;
 import com.dwes.models.Mensaje;
 import com.dwes.models.Persona;
-import com.dwes.models.Ejemplar;
+import com.dwes.services.EjemplarService;
 import com.dwes.services.MensajeService;
 import com.dwes.services.PersonaService;
-import com.dwes.services.EjemplarService;
 import com.dwes.services.PlantaService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -34,11 +37,15 @@ public class MensajeController {
 	@Autowired
 	private PlantaService plantaService;
 
+	@InitBinder
+	public void initBinder(WebDataBinder binder) {
+		binder.registerCustomEditor(Long.class, "ejemplar.id", new CustomNumberEditor(Long.class, true));
+	}
+
 	@GetMapping("/mensajesAdmin")
 	public String listar(@RequestParam(required = false) Long personaId, @RequestParam(required = false) String inicio,
 			@RequestParam(required = false) String fin, @RequestParam(required = false) Long plantaFiltro, Model model,
 			HttpSession session, RedirectAttributes redirectAttributes) {
-
 		String rol = (String) session.getAttribute("rol");
 		if (rol == null || (!rol.equals("ADMIN") && !rol.equals("PERSONAL"))) {
 			redirectAttributes.addFlashAttribute("errorMessage", "Acceso denegado. No tienes permisos.");
@@ -61,9 +68,11 @@ public class MensajeController {
 			redirectAttributes.addFlashAttribute("errorMessage", "Error al filtrar mensajes.");
 			return "redirect:/mensajesAdmin";
 		}
-		// Conservamos la lista de ejemplares para otros propósitos (si fuera necesario)
 		List<Ejemplar> ejemplaresConMensajes = ejemplarService.listarTodos().stream()
 				.filter(e -> mensajeService.buscarPorEjemplar(e.getId()).size() > 0).collect(Collectors.toList());
+		if (!model.containsAttribute("mensaje")) {
+			model.addAttribute("mensaje", new Mensaje());
+		}
 		model.addAttribute("mensajes", mensajes);
 		model.addAttribute("ejemplares", ejemplaresConMensajes);
 		model.addAttribute("personas", personaService.listarTodos());
@@ -73,30 +82,34 @@ public class MensajeController {
 	}
 
 	@PostMapping("/guardarMensaje")
-	public String guardar(@RequestParam String anotacion, @RequestParam Long ejemplarId, HttpSession session,
-			RedirectAttributes redirectAttributes) {
-
+	public String guardar(@Valid @ModelAttribute("mensaje") Mensaje mensaje, BindingResult bindingResult,
+			HttpSession session, RedirectAttributes redirectAttributes, Model model) {
 		String rol = (String) session.getAttribute("rol");
 		if (rol == null || (!rol.equals("ADMIN") && !rol.equals("PERSONAL"))) {
 			redirectAttributes.addFlashAttribute("errorMessage", "Acceso denegado. No tienes permisos.");
 			return "redirect:/inicio";
 		}
-		if (anotacion == null || anotacion.trim().isEmpty()) {
-			redirectAttributes.addFlashAttribute("errorMessage", "El mensaje no puede estar vacío.");
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("errorMessage", "Verifica los campos.");
+			model.addAttribute("mensajes", mensajeService.listarTodos());
+			model.addAttribute("ejemplares", ejemplarService.listarTodos().stream()
+					.filter(e -> mensajeService.buscarPorEjemplar(e.getId()).size() > 0).collect(Collectors.toList()));
+			model.addAttribute("personas", personaService.listarTodos());
+			model.addAttribute("plantas", plantaService.listarTodas());
+			return "mensajesAdmin";
+		}
+		Long usuarioId = (Long) session.getAttribute("usuarioId");
+		if (usuarioId == null) {
+			redirectAttributes.addFlashAttribute("errorMessage", "Usuario no válido en la sesión.");
 			return "redirect:/mensajesAdmin";
 		}
-		Persona persona = personaService.obtenerPorId((Long) session.getAttribute("usuarioId"));
-		Optional<Ejemplar> ejemplarOptional = ejemplarService.obtenerPorId(ejemplarId);
-		Ejemplar ejemplar = ejemplarOptional.orElse(null);
-		if (persona == null || ejemplar == null) {
-			redirectAttributes.addFlashAttribute("errorMessage", "Debe seleccionar un ejemplar válido.");
+		Persona persona = personaService.obtenerPorId(usuarioId);
+		if (persona == null) {
+			redirectAttributes.addFlashAttribute("errorMessage", "Persona no encontrada.");
 			return "redirect:/mensajesAdmin";
 		}
-		Mensaje mensaje = new Mensaje();
-		mensaje.setMensaje(anotacion);
-		mensaje.setFechaHora(LocalDateTime.now());
 		mensaje.setPersona(persona);
-		mensaje.setEjemplar(ejemplar);
+		mensaje.setFechaHora(LocalDateTime.now());
 		mensajeService.guardar(mensaje);
 		redirectAttributes.addFlashAttribute("successMessage", "Mensaje guardado correctamente.");
 		return "redirect:/mensajesAdmin";

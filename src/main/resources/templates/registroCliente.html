@@ -38,73 +38,129 @@
       </div>
       <div class="form-container">
         <form
+          th:object="${cliente}"
           th:action="@{/guardarCliente}"
           method="post"
           id="registroClienteForm"
         >
           <div class="mb-3">
             <label class="form-label">Nombre Completo</label>
-            <input type="text" class="form-control" name="nombre" required />
+            <input
+              type="text"
+              class="form-control"
+              th:field="*{nombre}"
+              required
+            />
+            <div
+              class="text-danger"
+              th:if="${#fields.hasErrors('nombre')}"
+              th:errors="*{nombre}"
+            ></div>
           </div>
           <div class="mb-3">
             <label class="form-label">Fecha de Nacimiento</label>
             <input
               type="date"
               class="form-control"
-              name="fechaNacimiento"
+              th:field="*{fechaNacimiento}"
               required
             />
+            <div
+              class="text-danger"
+              th:if="${#fields.hasErrors('fechaNacimiento')}"
+              th:errors="*{fechaNacimiento}"
+            ></div>
           </div>
           <div class="mb-3">
             <label class="form-label">NIF/NIE</label>
             <input
               type="text"
               class="form-control"
-              name="nifNie"
+              th:field="*{nifNie}"
               required
               pattern="^[0-9]{8}[A-Z]$"
               title="Debe ser 8 dígitos seguidos de una letra mayúscula."
             />
+            <div
+              class="text-danger"
+              th:if="${#fields.hasErrors('nifNie')}"
+              th:errors="*{nifNie}"
+            ></div>
           </div>
           <div class="mb-3">
             <label class="form-label">Dirección de Envío</label>
             <input
               type="text"
               class="form-control"
-              name="direccionEnvio"
+              th:field="*{direccionEnvio}"
               required
             />
+            <div
+              class="text-danger"
+              th:if="${#fields.hasErrors('direccionEnvio')}"
+              th:errors="*{direccionEnvio}"
+            ></div>
           </div>
           <div class="mb-3">
             <label class="form-label">Teléfono</label>
-            <input type="text" class="form-control" name="telefono" required />
+            <input
+              type="text"
+              class="form-control"
+              th:field="*{telefono}"
+              required
+            />
+            <div
+              class="text-danger"
+              th:if="${#fields.hasErrors('telefono')}"
+              th:errors="*{telefono}"
+            ></div>
           </div>
           <div class="mb-3">
             <label class="form-label">Correo Electrónico</label>
-            <input type="email" class="form-control" name="email" required />
+            <input
+              type="email"
+              class="form-control"
+              th:field="*{email}"
+              required
+            />
+            <div
+              class="text-danger"
+              th:if="${#fields.hasErrors('email')}"
+              th:errors="*{email}"
+            ></div>
           </div>
           <div class="mb-3">
             <label class="form-label">Nombre de Usuario</label>
             <input
               type="text"
               class="form-control"
-              name="usuario"
+              th:field="*{usuario}"
               required
               pattern="^[a-zA-Z0-9]+$"
               title="Solo letras y números, sin espacios."
             />
+            <div
+              class="text-danger"
+              th:if="${#fields.hasErrors('usuario')}"
+              th:errors="*{usuario}"
+            ></div>
           </div>
           <div class="mb-3">
             <label class="form-label">Contraseña</label>
             <input
               type="password"
               class="form-control"
-              name="password"
+              th:field="*{password}"
               required
               minlength="6"
               pattern="^\S+$"
               title="No puede contener espacios y debe tener al menos 6 caracteres."
             />
+            <div
+              class="text-danger"
+              th:if="${#fields.hasErrors('password')}"
+              th:errors="*{password}"
+            ></div>
           </div>
           <button type="submit" class="btn btn-primary w-100">
             Registrar Cliente
