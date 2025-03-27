@@ -45,10 +45,18 @@ public class ClienteController {
             redirectAttributes.addFlashAttribute("errorMessage", "El nombre de usuario ya está en uso.");
             return "redirect:/registroCliente";
         }
-
+        if (cliente.getPassword().length() < 6 || cliente.getPassword().contains(" ")) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "La contraseña debe tener al menos 6 caracteres y no contener espacios.");
+            return "redirect:/registroCliente";
+        }
+        String originalPassword = cliente.getPassword();
+        
         cliente = personaService.guardar(cliente);
-        Credenciales cred = new Credenciales(cliente.getUsuario(), cliente.getPassword(), "CLIENTE");
+        
+        Credenciales cred = new Credenciales(cliente.getUsuario(), originalPassword, "CLIENTE");
         credencialesService.guardar(cred);
+        
         redirectAttributes.addFlashAttribute("successMessage",
                 "Cliente registrado correctamente. Por favor, inicie sesión.");
         return "redirect:/login";

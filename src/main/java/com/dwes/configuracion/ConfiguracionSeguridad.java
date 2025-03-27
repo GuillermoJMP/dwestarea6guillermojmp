@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 @Configuration
 public class ConfiguracionSeguridad {
@@ -25,22 +26,23 @@ public class ConfiguracionSeguridad {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeHttpRequests(auth -> auth
-				.requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+		http.csrf().disable().authorizeHttpRequests(auth -> auth.requestMatchers("/css/**", "/js/**", "/images/**")
+				.permitAll()
 				.requestMatchers("/inicio", "/verPlantas", "/registroCliente", "/guardarCliente", "/login",
 						"/autenticar")
 				.permitAll().requestMatchers("/plantasAdmin", "/personaAdmin").hasAuthority("ADMIN")
 				.requestMatchers("/ejemplaresAdmin", "/mensajesAdmin", "/stockAdmin")
 				.hasAnyAuthority("ADMIN", "PERSONAL")
 				.requestMatchers("/zonaCliente", "/pedidoCliente", "/carrito", "/confirmarPedido", "/misPedidos")
-				.hasAuthority("CLIENTE").anyRequest().authenticated())
+				.hasAnyAuthority("CLIENTE", "PERSONAL").anyRequest().authenticated())
 				.formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/inicio", true).permitAll())
 				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/inicio").permitAll()
 						.addLogoutHandler((request, response, authentication) -> SecurityContextHolder.clearContext()))
 				.sessionManagement(session -> session.sessionFixation().migrateSession()
 						.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+				.securityContext(
+						security -> security.securityContextRepository(new HttpSessionSecurityContextRepository()))
 				.authenticationProvider(authenticationProvider());
-
 		return http.build();
 	}
 

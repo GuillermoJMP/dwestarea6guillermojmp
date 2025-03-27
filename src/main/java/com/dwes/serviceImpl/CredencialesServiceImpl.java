@@ -29,11 +29,11 @@ public class CredencialesServiceImpl implements CredencialesService {
 		return credencialesOpt.isPresent() && passwordEncoder.matches(password, credencialesOpt.get().getPassword());
 	}
 
-	@Override
-	public void guardar(Credenciales credenciales) {
-		credenciales.setPassword(passwordEncoder.encode(credenciales.getPassword()));
-		credencialesRepository.save(credenciales);
-	}
+    @Override
+    public void guardar(Credenciales credenciales) {
+        credenciales.setPassword(passwordEncoder.encode(credenciales.getPassword()));
+        credencialesRepository.save(credenciales);
+    }
 
 	@Override
 	public Optional<Credenciales> obtenerUsuario(String usuario) {
