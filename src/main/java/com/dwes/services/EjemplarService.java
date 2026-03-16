@@ -21,5 +21,4 @@ public interface EjemplarService {
 	LocalDateTime obtenerUltimaFechaMensaje(Long ejemplarId);
 	
 	int contarEjemplaresPorPlanta(Long plantaId);
-
 }

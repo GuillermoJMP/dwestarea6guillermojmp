@@ -31,6 +31,12 @@ public class PersonaServiceImpl implements PersonaService {
     }
 
     @Override
+    @Transactional
+    public Persona actualizar(Persona persona) {
+        return personaRepository.save(persona);
+    }
+
+    @Override
     public void eliminar(Long id) {
         personaRepository.deleteById(id);
     }

@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 @Controller
 public class PedidoController {
@@ -42,9 +44,20 @@ public class PedidoController {
 
     @GetMapping("/pedidoCliente")
     public String mostrarPedidoCliente(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        String usuarioLogeado = (String) session.getAttribute("usuarioLogeado");
         List<Planta> todasPlantas = plantaService.listarTodas();
         List<Planta> plantasConStock = new ArrayList<>();
         Map<Long, Integer> stockPorPlanta = new HashMap<>();
+        Set<Long> favoritosIds = new HashSet<>();
+
+        if (usuarioLogeado != null) {
+            Persona persona = personaService.obtenerPorUsuario(usuarioLogeado);
+            if (persona != null && persona.getFavoritos() != null) {
+                for (Planta favorita : persona.getFavoritos()) {
+                    favoritosIds.add(favorita.getId());
+                }
+            }
+        }
 
         for (Planta p : todasPlantas) {
             int stock = ejemplarService.filtrarPorPlanta(p.getId())
@@ -58,6 +71,10 @@ public class PedidoController {
             }
         }
 
+        if (usuarioLogeado != null) {
+            plantasConStock = plantaService.ordenarFavoritosPrimero(plantasConStock, usuarioLogeado);
+        }
+
         List<Ejemplar> ejemplaresNoVendidos = ejemplarService.listarTodos()
                 .stream()
                 .filter(e -> e.isDisponible())
@@ -66,6 +83,7 @@ public class PedidoController {
         model.addAttribute("plantas", plantasConStock);
         model.addAttribute("ejemplares", ejemplaresNoVendidos);
         model.addAttribute("stockPorPlanta", stockPorPlanta);
+        model.addAttribute("favoritosIds", favoritosIds);
 
         return "pedidoCliente";
     }

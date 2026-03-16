@@ -62,8 +62,28 @@
           <div class="col" th:each="planta : ${plantas}">
             <div class="card h-100 shadow-sm">
               <div class="card-body">
-                <h5 class="card-title" th:text="${planta.nombreComun}"></h5>
-                <p class="card-text">
+                <div class="d-flex justify-content-between align-items-start">
+                  <h5 class="card-title mb-0" th:text="${planta.nombreComun}"></h5>
+                  <button
+                    th:if="${favoritosIds != null and favoritosIds.contains(planta.id)}"
+                    type="submit"
+                    th:form="'favorito-quitar-' + ${planta.id}"
+                    class="btn btn-link p-0 text-warning fs-4 text-decoration-none ms-2"
+                    title="Quitar de favoritos"
+                  >
+                    ★
+                  </button>
+                  <button
+                    th:unless="${favoritosIds != null and favoritosIds.contains(planta.id)}"
+                    type="submit"
+                    th:form="'favorito-agregar-' + ${planta.id}"
+                    class="btn btn-link p-0 text-secondary fs-4 text-decoration-none ms-2"
+                    title="Añadir a favoritos"
+                  >
+                    ☆
+                  </button>
+                </div>
+                <p class="card-text mt-2">
                   Ejemplares disponibles:
                   <span th:text="${stockPorPlanta[planta.id]}"></span>
                 </p>
@@ -90,6 +110,20 @@
           </button>
         </div>
       </form>
+      <div th:each="planta : ${plantas}">
+        <form
+          th:id="'favorito-agregar-' + ${planta.id}"
+          th:action="@{/favoritos/planta/agregar/{id}(id=${planta.id})}"
+          method="post"
+          style="display: none"
+        ></form>
+        <form
+          th:id="'favorito-quitar-' + ${planta.id}"
+          th:action="@{/favoritos/planta/quitar/{id}(id=${planta.id})}"
+          method="post"
+          style="display: none"
+        ></form>
+      </div>
       <div class="text-center mt-3">
         <a class="btn btn-success" th:href="@{/carrito}">Ver Carrito</a>
       </div>

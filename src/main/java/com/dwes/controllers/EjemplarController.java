@@ -94,7 +94,7 @@ public class EjemplarController {
 			mensajeInicial.setEjemplar(ejemplar);
 			mensajeInicial.setMensaje("Ejemplar " + ejemplar.getNombre() + " creado por " + usuarioLogeado);
 			mensajeInicial.setFechaHora(LocalDateTime.now());
-			mensajeInicial.setPersona(personaLogeada);  
+			mensajeInicial.setPersona(personaLogeada);
 			mensajeService.guardar(mensajeInicial);
 
 
@@ -104,5 +104,4 @@ public class EjemplarController {
 		}
 		return "redirect:/ejemplaresAdmin";
 	}
-
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.Optional;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class PlantaController {
@@ -63,5 +64,44 @@ public class PlantaController {
 	private boolean esAdministrador(HttpSession session) {
 		String rol = (String) session.getAttribute("rol");
 		return rol != null && rol.equals("ADMIN");
+	}
+	@PostMapping("/favoritos/planta/agregar/{id}")
+	public String agregarAFavoritos(@PathVariable Long id, HttpSession session, HttpServletRequest request,
+			RedirectAttributes redirectAttributes) {
+		String usuarioLogeado = (String) session.getAttribute("usuarioLogeado");
+		if (usuarioLogeado == null) {
+			redirectAttributes.addFlashAttribute("errorMessage", "Debes iniciar sesión para añadir favoritos.");
+			return "redirect:/login";
+		}
+
+		try {
+			plantaService.agregarAFavoritos(usuarioLogeado, id);
+			redirectAttributes.addFlashAttribute("successMessage", "Planta añadida a favoritos.");
+		} catch (RuntimeException e) {
+			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+		}
+
+		String referer = request.getHeader("Referer");
+		return "redirect:" + (referer != null ? referer : "/pedidoCliente");
+	}
+
+	@PostMapping("/favoritos/planta/quitar/{id}")
+	public String quitarDeFavoritos(@PathVariable Long id, HttpSession session, HttpServletRequest request,
+			RedirectAttributes redirectAttributes) {
+		String usuarioLogeado = (String) session.getAttribute("usuarioLogeado");
+		if (usuarioLogeado == null) {
+			redirectAttributes.addFlashAttribute("errorMessage", "Debes iniciar sesión para quitar favoritos.");
+			return "redirect:/login";
+		}
+
+		try {
+			plantaService.quitarDeFavoritos(usuarioLogeado, id);
+			redirectAttributes.addFlashAttribute("successMessage", "Planta eliminada de favoritos.");
+		} catch (RuntimeException e) {
+			redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+		}
+
+		String referer = request.getHeader("Referer");
+		return "redirect:" + (referer != null ? referer : "/pedidoCliente");
 	}
 }

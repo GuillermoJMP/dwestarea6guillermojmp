@@ -43,7 +43,7 @@ public class EjemplarServiceImpl implements EjemplarService {
     public List<Ejemplar> filtrarPorPlanta(Long plantaId) {
         return ejemplarRepository.findByPlantaId(plantaId);
     }
-    
+
     @Override
     public List<Ejemplar> filtrarPorPlantas(List<Long> plantaIds) {
         return ejemplarRepository.findByPlantaIdIn(plantaIds);
@@ -60,7 +60,7 @@ public class EjemplarServiceImpl implements EjemplarService {
                 .map(Mensaje::getFechaHora)
                 .orElse(null);
     }
-    
+
     @Override
     public int contarEjemplaresPorPlanta(Long plantaId) {
         return ejemplarRepository.countByPlantaId(plantaId);

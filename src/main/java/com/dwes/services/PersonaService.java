@@ -8,6 +8,8 @@ public interface PersonaService {
 
 	Persona guardar(Persona persona);
 
+	Persona actualizar(Persona persona);
+
 	void eliminar(Long id);
 
 	Persona obtenerPorId(Long id);

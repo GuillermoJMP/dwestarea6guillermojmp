@@ -1,6 +1,9 @@
 package com.dwes.models;
 
 import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+import com.dwes.models.Planta;
 
 @Entity
 @Table(name = "persona")
@@ -21,6 +24,14 @@ public class Persona {
 	private String nifNie;
 	private String direccionEnvio;
 	private String telefono;
+
+	@ManyToMany
+	@JoinTable(
+	    name = "persona_favoritos",
+	    joinColumns = @JoinColumn(name = "persona_id"),
+	    inverseJoinColumns = @JoinColumn(name = "planta_id")
+	)
+	private Set<Planta> favoritos = new HashSet<>();
 
 	public Persona() {
 	}
@@ -102,5 +113,13 @@ public class Persona {
 
 	public void setTelefono(String telefono) {
 		this.telefono = telefono;
+	}
+
+	public Set<Planta> getFavoritos() {
+		return favoritos;
+	}
+
+	public void setFavoritos(Set<Planta> favoritos) {
+		this.favoritos = favoritos;
 	}
 }

@@ -18,4 +18,12 @@ public interface PlantaService {
 	boolean existeNombreComun(String nombreComun);
 
 	boolean existeNombreCientifico(String nombreCientifico);
+
+	void agregarAFavoritos(String usuario, Long plantaId);
+
+	void quitarDeFavoritos(String usuario, Long plantaId);
+
+	boolean esFavorito(String usuario, Long plantaId);
+
+	List<Planta> ordenarFavoritosPrimero(List<Planta> plantas, String usuario);
 }
